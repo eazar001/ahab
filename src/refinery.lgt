@@ -1,34 +1,39 @@
-:- object(refinery).
+:- object(refinery,
+	imports(metric_sort)).
 
     % Equities analysis refinery: where all common stock equities mined from the cloud are sent to be processed via
     % contextual analysis of fundamental metrics.
 
+	:- public(sort_pe_ratios/2).
 
-    stock_score(_Ticker, _Score) :-
-        true.
+    :- public(sort_div_rankings/2).
 
     % rank PE ratios of several companies (based on their peer lists) from best to worst
     sort_pe_ratios(Ticker, Ratios) :-
         Ticker::peers(Peers),
         findall(
             pe_rank(Peer, Ratio),
-            (   list::member(Peer, [Ticker|Peers]),
-                Ticker::pe_ratio(Ratio)
+			(   list::member(Peer0, [Ticker|Peers]),
+				{ downcase_atom(Peer0, Peer) },
+				current_object(Peer),
+                Peer::pe_ratio(Ratio)
             ),
             Ratios0
-        ),
-        { predsort(pe_sort, Ratios0, Ratios) }.
+		),
+        list::sort(::pe_sort, Ratios0, Ratios).
 
     sort_div_rankings(Ticker, Yields) :-
         Ticker::peers(Peers),
         findall(
             div_yield(Peer, Div),
-            (   list::member(Peer, [Ticker|Peers]),
-                Ticker::div_yield(Div)
+            (   list::member(Peer0, [Ticker|Peers]),
+                { downcase_atom(Peer0, Peer) },
+                current_object(Peer),
+                Peer::div_yield(Div)
             ),
             Yields0
         ),
-        { predsort(div_sort, Yields0, Yields) }.
+        list::sort(::div_sort, Yields0, Yields).
         
 
     % generate score based off of a company's PE ratio relative to a competitor

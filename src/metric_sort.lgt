@@ -1,9 +1,8 @@
 :- category(metric_sort).
 
-	:- public(pe_sort/3).
+    :- private(pe_sort/3).
+    :- private(div_sort/3).
 
-	:- public(div_sort/3).
-	
     % sort competitors by relative PE ranking
     pe_sort(<, pe_rank(_, R1), pe_rank(_, R2)) :-
         R1 < R2,

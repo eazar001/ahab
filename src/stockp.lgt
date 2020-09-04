@@ -8,6 +8,7 @@
 	]).
 
 	:- public([
+		name/1,
 		peg_ratio/1,
 		pb_ratio/1,
 		peers/1,
@@ -17,6 +18,7 @@
 	]).
 
 	:- dynamic([
+		name/1,
 		peg_ratio/1,
 		pb_ratio/1,
 		peers/1,
