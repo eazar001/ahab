@@ -35,6 +35,13 @@
         ),
         list::sort(::div_sort, Yields0, Yields).
         
+    profit_margin_score(0.0, -0.25).
+    profit_margin_score(Margin, Score) :-
+        Margin < 0.0,
+        Score is -0.25 * Margin -0.25,
+        !.
+    profit_margin_score(Margin, Margin) :-
+        Margin > 0.0.
 
     % generate score based off of a company's PE ratio relative to a competitor
     pe_score(Ratio, Ratio, 0.0) :-

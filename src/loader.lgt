@@ -8,7 +8,6 @@
 		reader(loader),
 		meta(loader),
         metric_sort,
-        stockp,
         stock,
 		refinery,
 		equity_extractor
