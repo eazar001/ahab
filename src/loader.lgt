@@ -7,6 +7,7 @@
         basic_types(loader),
         reader(loader),
         meta(loader),
+        statistics(loader),
         metric_sort,
         stock,
         refinery,
