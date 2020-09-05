@@ -4,6 +4,7 @@
 
     new(Id, stock(Ticker, Peers, Stats)) :-
         {   downcase_atom(Ticker, Id),
+            meta::map(downcase_atom, Peers, DownCasedPeers),
             Name = Stats.companyName,
             PEratio = Stats.peRatio,
             PEGratio = Stats.pegRatio,
@@ -14,7 +15,7 @@
         },
         create_object(Id, [extends(stock)], [], [
             name(Name),
-            peers(Peers),
+            peers(DownCasedPeers),
             pe_ratio(PEratio),
             peg_ratio(PEGratio),
             pb_ratio(PBratio),

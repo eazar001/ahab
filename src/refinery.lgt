@@ -13,8 +13,7 @@
         Ticker::peers(Peers),
         findall(
             pe_rank(Peer, Ratio),
-            (   list::member(Peer0, [Ticker|Peers]),
-                { downcase_atom(Peer0, Peer) },
+            (   list::member(Peer, [Ticker|Peers]),
                 current_object(Peer),
                 Peer::pe_ratio(Ratio)
             ),
@@ -26,8 +25,7 @@
         Ticker::peers(Peers),
         findall(
             div_yield(Peer, Div),
-            (   list::member(Peer0, [Ticker|Peers]),
-                { downcase_atom(Peer0, Peer) },
+            (   list::member(Peer, [Ticker|Peers]),
                 current_object(Peer),
                 Peer::div_yield(Div)
             ),
