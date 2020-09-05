@@ -186,9 +186,13 @@
         !,
         Score is 0.5 + 0.5 * (2.0 - Ratio).
     pb_score(Ratio, Score) :-
+        Ratio > 0.0,
         Ratio < 1.0,
         !,
         Score is 2 * (1.0 - Ratio).
+    pb_score(Ratio, Score) :-
+        Ratio < 0.0,
+        Score is 0.25 * Ratio.
 
     % generate free cash flow score 
     cash_flow_score(C, C, 0.0) :-
