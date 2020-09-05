@@ -1,10 +1,10 @@
 :- object(refinery,
-	imports(metric_sort)).
+    imports(metric_sort)).
 
     % Equities analysis refinery: where all common stock equities mined from the cloud are sent to be processed via
     % contextual analysis of fundamental metrics.
 
-	:- public(sort_pe_ratios/2).
+    :- public(sort_pe_ratios/2).
 
     :- public(sort_div_rankings/2).
 
@@ -13,13 +13,13 @@
         Ticker::peers(Peers),
         findall(
             pe_rank(Peer, Ratio),
-			(   list::member(Peer0, [Ticker|Peers]),
-				{ downcase_atom(Peer0, Peer) },
-				current_object(Peer),
+            (   list::member(Peer0, [Ticker|Peers]),
+                { downcase_atom(Peer0, Peer) },
+                current_object(Peer),
                 Peer::pe_ratio(Ratio)
             ),
             Ratios0
-		),
+        ),
         list::sort(::pe_sort, Ratios0, Ratios).
 
     sort_div_rankings(Ticker, Yields) :-
