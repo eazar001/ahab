@@ -65,10 +65,39 @@
     score(Score) :-
         total_cash_score(TotalCashScore),
         profit_margin_score(ProfitMarginScore),
-        pe_score(PEScore),
-        peg_score(PEGScore),
-        pb_score(PBScore),
-        Score is ProfitMarginScore + TotalCashScore + PEScore + PEGScore + PBScore.
+        pe_score(PEscore),
+        price_score(PEscore, PriceScore),
+        Score is ProfitMarginScore + TotalCashScore + PriceScore.
+    
+    price_score(PEscore, Score) :-
+        PEscore =< 0.0,
+        !,
+        growth_focused_price_score(Score).
+    price_score(_, Score) :-
+        earnings_focused_price_score(Score).
+    
+    price_score_book_modifier(PBscore, NewPBscore) :-
+        ::peg_ratio(PEG),
+        PEG \= 'None',
+        PEG >= 0.0,
+        PEG =< 1.0,
+        !,
+        NewPBscore is 2 * PBscore.
+    price_score_book_modifier(PBscore, PBscore).
+    
+    earnings_focused_price_score(Score) :-
+        pe_score(PE),
+        peg_score(PEG),
+        pb_score(PB0),
+        price_score_book_modifier(PB0, PB),
+        Score is PE + 0.25 * PEG + PB.
+    
+    growth_focused_price_score(Score) :-
+        pe_score(PE),
+        peg_score(PEG),
+        pb_score(PB0),
+        price_score_book_modifier(PB0, PB),
+        Score is 0.25 * PE + PEG + PB.
 
     sort_pe_ratios(Ratios) :-
         self(Ticker),
@@ -127,7 +156,6 @@
         pe_score(PE, Mean, Score).
     pe_score(0.0).
 
-    % generate score based off of a company's PE ratio relative to a competitor
     pe_score(Ratio, Ratio, 0.0) :-
         !.
     pe_score(Ratio1, Ratio2, Score) :-
@@ -137,7 +165,6 @@
     pe_score(Ratio1, Ratio2, Score) :-
         Score is -(Ratio1 - Ratio2) / Ratio2.
 
-    % generate score based off of a company's div yield relative to a competitor
     div_score(Div, Div, 0.0) :-
         !.
     div_score(Div1, Div2, Score) :-
@@ -154,7 +181,6 @@
         peg_score(Ratio, Score).
     peg_score(0.0).
 
-    % generate score based off of a company's PEG ratio
     peg_score(1.0, 0.0) :-
         !.
     peg_score(Ratio, Score) :-
@@ -170,7 +196,6 @@
         Ratio \== 'None',
         pb_score(Ratio, Score).
 
-    % generate score based off of a company's P/B (price-to-book) ratio
     pb_score(3.0, 0.0) :-
         !.
     pb_score(Ratio, Score) :-
@@ -196,7 +221,6 @@
         Ratio < 0.0,
         Score is 0.25 * Ratio.
 
-    % generate free cash flow score 
     cash_flow_score(C, C, 0.0) :-
         !.
     cash_flow_score(C1, C2, Score) :-
