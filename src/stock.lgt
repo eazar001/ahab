@@ -133,7 +133,9 @@
         meta::map(arg(2), Ratios1, Ratios2),
         meta::exclude(>(0.0), Ratios2, Ratios),
         sample::harmonic_mean(Ratios, Mean),
-        pe_score(PE, Mean, Score).
+        writeln(Mean),
+        pe_score(PE, Mean, Score),
+        writeln(Score).
     pe_score(0.0).
 
     % generate score based off of a company's PE ratio relative to a competitor
@@ -144,7 +146,7 @@
         !,
         Score is (Ratio2 - Ratio1) / Ratio1.
     pe_score(Ratio1, Ratio2, Score) :-
-        Score is (Ratio1 - Ratio2) / Ratio2.
+        Score is -(Ratio1 - Ratio2) / Ratio2.
 
     % generate score based off of a company's div yield relative to a competitor
     div_score(Div, Div, 0.0) :-
