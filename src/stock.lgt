@@ -111,7 +111,7 @@
     profit_margin_score(Margin, Score) :-
         Margin < 0.0,
         !,
-        Score is 0.25 * Margin * 0.25.
+        Score is 0.25 + Margin * 0.25.
     profit_margin_score(Margin, Margin) :-
         Margin > 0.0.
 
