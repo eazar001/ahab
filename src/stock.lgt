@@ -3,27 +3,18 @@
     :- public(new/2).
 
     new(Id, stock(Ticker, Peers, Stats)) :-
-        {   downcase_atom(Ticker, Id),
-            meta::map(downcase_atom, Peers, DownCasedPeers),
-            Name = Stats.companyName,
-            PEratio = Stats.peRatio,
-            PEGratio = Stats.pegRatio,
-            PBratio = Stats.priceToBook,
-            DivYield = Stats.dividendYield,
-            ProfitMargin = Stats.profitMargin,
-            TotalCash = Stats.totalCash
-        },
+        { downcase_atom(Ticker, Id) },
+        meta::map(downcase_atom, Peers, DownCasedPeers),
         create_object(Id, [extends(stock)], [], [
-            name(Name),
+            name(Stats.companyName),
             peers(DownCasedPeers),
-            pe_ratio(PEratio),
-            peg_ratio(PEGratio),
-            pb_ratio(PBratio),
-            div_yield(DivYield),
-            profit_margin(ProfitMargin),
-            total_cash(TotalCash)
+            pe_ratio(Stats.peRatio),
+            peg_ratio(Stats.pegRatio),
+            pb_ratio(Stats.priceToBook),
+            div_yield(Stats.dividendYield),
+            profit_margin(Stats.profitMargin),
+            total_cash(Stats.totalCash)
         ]).
-        
 
 :- end_object.
 
