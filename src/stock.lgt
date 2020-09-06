@@ -133,9 +133,7 @@
         meta::map(arg(2), Ratios1, Ratios2),
         meta::exclude(>(0.0), Ratios2, Ratios),
         sample::harmonic_mean(Ratios, Mean),
-        writeln(Mean),
-        pe_score(PE, Mean, Score),
-        writeln(Score).
+        pe_score(PE, Mean, Score).
     pe_score(0.0).
 
     % generate score based off of a company's PE ratio relative to a competitor
