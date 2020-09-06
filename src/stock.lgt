@@ -167,7 +167,12 @@
     peg_score(1.0, 0.0) :-
         !.
     peg_score(Ratio, Score) :-
+        Ratio >= 0.0,
+        !,
         Score is 1.0 - Ratio.
+    peg_score(Ratio, Score) :-
+        Ratio < 0.0,
+        Score is 0.02 * Ratio.
 
     pb_score(Score) :-
         ::pb_ratio(Ratio),
