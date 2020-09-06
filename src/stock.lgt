@@ -176,6 +176,10 @@
     pb_score(3.0, 0.0) :-
         !.
     pb_score(Ratio, Score) :-
+        Ratio > 3.0,
+        !,
+        Score is -0.02 * (Ratio - 3.0).
+    pb_score(Ratio, Score) :-
         Ratio < 3.0,
         Ratio >= 2.0,
         !,
