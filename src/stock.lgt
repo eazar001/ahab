@@ -159,7 +159,9 @@
     peg_score(Score) :-
         ::peg_ratio(Ratio),
         Ratio \== 'None',
+        !,
         peg_score(Ratio, Score).
+    peg_score(0.0).
 
     % generate score based off of a company's PEG ratio
     peg_score(1.0, 0.0) :-
