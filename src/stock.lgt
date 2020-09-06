@@ -77,7 +77,7 @@
         pe_score(PEScore),
         peg_score(PEGScore),
         pb_score(PBScore),
-        Score is ProfitMarginScore + (0.10 * TotalCashScore) + (0.5 * PEScore) + (0.3 * PEGScore) + (0.25 * PBScore).
+        Score is ProfitMarginScore + TotalCashScore + PEScore + PEGScore + PBScore.
 
     sort_pe_ratios(Ratios) :-
         self(Ticker),
