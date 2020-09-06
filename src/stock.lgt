@@ -226,9 +226,9 @@
         !.
     total_cash_score(Cash, Score) :-
         Cash > 0.0,
-        Score is 1E-9 * Cash,
+        Score is 1E-10 * Cash,
         !.
     total_cash_score(Cash, Score) :-
-        Score is 1E-9 * Cash.
+        Score is 1E-10 * Cash.
 
 :- end_object.
