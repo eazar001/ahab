@@ -7,7 +7,7 @@
         comment is 'Extract equities from a Logtalk/Prolog database to instantiate their objects dynamically.'
     ]).
 
-	:- public(extract_and_load/1).
+    :- public(extract_and_load/1).
     :- mode(extract_and_load(+path), one).
     :- info(extract_and_load/1, [
         comment is 'Extracts and loads stock information dynamically provided a logical database.',

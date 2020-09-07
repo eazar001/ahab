@@ -7,7 +7,7 @@
         comment is 'Constructor/destructor for the stock object.'
     ]).
 
-	:- public(new/2).
+    :- public(new/2).
     :- mode(new(?object_identifier, +compound), one).
     :- info(new/2, [
         comment is 'Creates a new stock object when provided a compound term representing stock information.',
@@ -17,7 +17,7 @@
         ]
     ]).
 
-	:- public(delete/1).
+    :- public(delete/1).
     :- mode(delete(+object_identifier), one).
     :- info(delete/1, [
         comment is 'Deletes an object that extends the stock object.'
@@ -54,7 +54,7 @@
         comment is 'Abstract representation of a common stock security.'
     ]).
 
-	:- public(name/1).
+    :- public(name/1).
     :- mode(name(-atom), one).
     :- info(name/1, [
         comment is 'Retrieves the name of the company.'
@@ -66,43 +66,43 @@
         comment is 'Retrieves the price to earnings per share ratio.'
     ]).
 
-	:- public(peg_ratio/1).
+    :- public(peg_ratio/1).
     :- mode(peg_ratio(-float), one).
     :- info(peg_ratio/1 ,[
         comment is 'Retrieves the PEG ratio (P/E relative to growth).'
     ]).
 
-	:- public(pb_ratio/1).
+    :- public(pb_ratio/1).
     :- mode(pb_ratio(-float), one).
     :- info(pb_ratio/1, [
         comment is 'Retrieves the price to book value (assets minus liabilities) per share ratio.'
     ]).
 
-	:- public(peers/1).
+    :- public(peers/1).
     :- mode(peers(-list(atom)), one).
     :- info(peers/1, [
         comment is 'Retrieves a list of stock ticker symbols representing the peers (competitors).'
     ]).
 
-	:- public(div_yield/1).
+    :- public(div_yield/1).
     :- mode(div_yield(-float), one).
     :- info(div_yield/1, [
         comment is 'Retrieves the dividend yield as a proportion.'
     ]).
 
-	:- public(profit_margin/1).
+    :- public(profit_margin/1).
     :- mode(profit_margin(-float), one).
     :- info(profit_margin/1, [
         comment is 'Retrieves the profit margin as a proportion.'
     ]).
 
-	:- public(total_cash/1).
+    :- public(total_cash/1).
     :- mode(total_cash(-integer), one).
     :- info(total_cash/1, [
         comment is 'The sum of all the cash recorded on the company''s books, as an integer.'
     ]).
 
-	:- public(score/1).
+    :- public(score/1).
     :- mode(score(-float), one).
     :- info(score/1, [
         comment is 'The total composite score of the stock, indicating how valuable the company is as an investment decision',

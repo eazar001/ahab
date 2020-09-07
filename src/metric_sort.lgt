@@ -7,7 +7,7 @@
         comment is 'Sorting schemes for interal metrics and scores.'
     ]).
 
-	:- private(pe_sort/3).
+    :- private(pe_sort/3).
     :- mode(pe_sort(+atom, +compound, +compound), one).
     :- info(pe_sort/3, [
         comment is 'Sorting scheme to compare PE ratios.',
@@ -18,7 +18,7 @@
         ]
     ]).
 
-	:- private(div_sort/3).
+    :- private(div_sort/3).
     :- mode(div_sort(+atom, +compound, +compound), one).
     :- info(div_sort/3, [
         comment is 'Sorting scheme to compare dividend yields.',
@@ -29,7 +29,7 @@
         ]
     ]).
 
-	:- private(score_sort/3).
+    :- private(score_sort/3).
     :- mode(score_sort(+atom, +compound, +compound), one).
     :- info(score_sort/3, [
         comment is 'Sorting scheme to compare composite scores.',
