@@ -1,11 +1,32 @@
 :- object(stock_factory).
 
-    :- public(new/2).
+    :- info([
+        version is 0:1:0,
+        author is 'Ebrahim Azarisooreh',
+        date is 2020-09-07,
+        comment is 'Constructor/destructor for the stock object.'
+    ]).
+
+	:- public(new/2).
+    :- mode(new(?object_identifier, +compound), one).
+    :- info(new/2, [
+        comment is 'Creates a new stock object when provided a compound term representing stock information.',
+        arguments is [
+            'Id' - 'An object identifier for the stock object to be created.',
+            'Stock' - 'A three argument compound term containing the ticker symbol, a list of peers, and statistics for the stock object to be created.'
+        ]
+    ]).
+
+	:- public(delete/1).
+    :- mode(delete(+object_identifier), one).
+    :- info(delete/1, [
+        comment is 'Deletes an object that extends the stock object.'
+    ]).
 
     new(Id, stock(Ticker, Peers, Stats)) :-
         { downcase_atom(Ticker, Id) },
         meta::map(downcase_atom, Peers, DownCasedPeers),
-        create_object(Id, [extends(stock)], [], [
+        Clauses = [
             name(Stats.companyName),
             peers(DownCasedPeers),
             pe_ratio(Stats.peRatio),
@@ -14,7 +35,12 @@
             div_yield(Stats.dividendYield),
             profit_margin(Stats.profitMargin),
             total_cash(Stats.totalCash)
-        ]).
+        ],
+        create_object(Id, [extends(stock)], [], Clauses).
+
+    delete(Id) :-
+        extends_object(Id, stock),
+        abolish_object(Id).
 
 :- end_object.
 
@@ -25,41 +51,64 @@
         version is 0:1:0,
         author is 'Ebrahim Azarisooreh',
         date is 2020-09-03,
-        comment is 'Protocol for the stock object.'
+        comment is 'Abstract representation of a common stock security.'
     ]).
 
-    :- public([
-        name/1,
-        peg_ratio/1,
-        pb_ratio/1,
-        peers/1,
-        div_yield/1,
-        profit_margin/1,
-        cash_flow/1,
-        total_cash/1,
-        total_cash_score/1,
-        profit_margin_score/1,
-        pe_score/1,
-        peg_score/1,
-        pb_score/1,
-        score/1
-    ]).
-
-    :- dynamic([
-        name/1,
-        peg_ratio/1,
-        pb_ratio/1,
-        peers/1,
-        div_yield/1,
-        profit_margin/1,
-        total_cash/1
+	:- public(name/1).
+    :- mode(name(-atom), one).
+    :- info(name/1, [
+        comment is 'Retrieves the name of the company.'
     ]).
 
     :- public(pe_ratio/1).
-    :- dynamic(pe_ratio/1).
     :- mode(pe_ratio(-float), one).
     :- info(pe_ratio/1, [
-        comment is 'Retrieves the p/e ratio of a stock object.'
+        comment is 'Retrieves the price to earnings per share ratio.'
+    ]).
+
+	:- public(peg_ratio/1).
+    :- mode(peg_ratio(-float), one).
+    :- info(peg_ratio/1 ,[
+        comment is 'Retrieves the PEG ratio (P/E relative to growth).'
+    ]).
+
+	:- public(pb_ratio/1).
+    :- mode(pb_ratio(-float), one).
+    :- info(pb_ratio/1, [
+        comment is 'Retrieves the price to book value (assets minus liabilities) per share ratio.'
+    ]).
+
+	:- public(peers/1).
+    :- mode(peers(-list(atom)), one).
+    :- info(peers/1, [
+        comment is 'Retrieves a list of stock ticker symbols representing the peers (competitors).'
+    ]).
+
+	:- public(div_yield/1).
+    :- mode(div_yield(-float), one).
+    :- info(div_yield/1, [
+        comment is 'Retrieves the dividend yield as a proportion.'
+    ]).
+
+	:- public(profit_margin/1).
+    :- mode(profit_margin(-float), one).
+    :- info(profit_margin/1, [
+        comment is 'Retrieves the profit margin as a proportion.'
+    ]).
+
+	:- public(total_cash/1).
+    :- mode(total_cash(-integer), one).
+    :- info(total_cash/1, [
+        comment is 'The sum of all the cash recorded on the company''s books, as an integer.'
+    ]).
+
+	:- public(score/1).
+    :- mode(score(-float), one).
+    :- info(score/1, [
+        comment is 'The total composite score of the stock, indicating how valuable the company is as an investment decision',
+        arguments is [
+            'Score' - 'A continuous score from 1.0 to 5.0, where 1.0 is an excellent investment decision, and 5.0 is a dangerous one.'
+        ]
     ]).
 
     score(Score) :-
@@ -68,14 +117,14 @@
         pe_score(PEscore),
         price_score(PEscore, PriceScore),
         Score is ProfitMarginScore + TotalCashScore + PriceScore.
-    
+
     price_score(PEscore, Score) :-
         PEscore =< 0.0,
         !,
         growth_focused_price_score(Score).
     price_score(_, Score) :-
         earnings_focused_price_score(Score).
-    
+
     price_score_book_modifier(PBscore, NewPBscore) :-
         ::peg_ratio(PEG),
         PEG \= 'None',
@@ -84,14 +133,14 @@
         !,
         NewPBscore is 2 * PBscore.
     price_score_book_modifier(PBscore, PBscore).
-    
+
     earnings_focused_price_score(Score) :-
         pe_score(PE),
         peg_score(PEG),
         pb_score(PB0),
         price_score_book_modifier(PB0, PB),
         Score is PE + 0.25 * PEG + PB.
-    
+
     growth_focused_price_score(Score) :-
         pe_score(PE),
         peg_score(PEG),
@@ -105,7 +154,7 @@
         findall(
             pe_rank(Peer, Ratio),
             (   list::member(Peer, [Ticker|Peers]),
-                current_object(Peer),
+                extends_object(Peer, stock),
                 Peer::pe_ratio(Ratio),
                 Ratio \== 'None',
                 Ratio >= 0.0
@@ -120,7 +169,7 @@
         findall(
             div_yield(Peer, Div),
             (   list::member(Peer, [Ticker|Peers]),
-                current_object(Peer),
+                extends_object(Peer, stock),
                 Peer::div_yield(Div),
                 Div \== 'None'
             ),
@@ -221,22 +270,13 @@
         Ratio < 0.0,
         Score is 0.25 * Ratio.
 
-    cash_flow_score(C, C, 0.0) :-
-        !.
-    cash_flow_score(C1, C2, Score) :-
-        C1 < C2,
-        !,
-        Score is (C1 - C2) / C1.
-    cash_flow_score(C1, C2, Score) :-
-        Score is (C1 - C2) / C2.
-    
     total_cash_score(Score) :-
         ::total_cash(Cash),
         Cash \== 'None',
         !,
         total_cash_score(Cash, Score).
     total_cash_score(0.0).
-    
+
     total_cash_score(0.0, -0.25) :-
         !.
     total_cash_score(Cash, Score) :-
