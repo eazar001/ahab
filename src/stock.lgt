@@ -119,7 +119,7 @@
         Score is ProfitMarginScore + TotalCashScore + PriceScore.
 
     price_score(PEscore, Score) :-
-        PEscore =< 0.0,
+        PEscore >= 0.0,
         !,
         growth_focused_price_score(Score).
     price_score(_, Score) :-
