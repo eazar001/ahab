@@ -5,5 +5,5 @@ An automated stock screener, to score candidates for the highest value stocks in
 
 Usage:
 ```
-swilgt -g "{'src/loader'}"
+./run.sh
 ```
