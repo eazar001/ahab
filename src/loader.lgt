@@ -14,5 +14,6 @@
         refinery,
         equity_extractor
     ]),
-    equity_extractor::extract_and_load(data('equities.lgt'))
+    equity_extractor::extract_and_load(data('equities.lgt')),
+    refinery::write_score_output
 )).
