@@ -11,3 +11,10 @@ Usage:
 ```
 
 You should see the results written to this directory entitled "out.json".
+
+If you want to run this from a webpage, use the following in the terminal
+
+Usage:
+```
+python -m SimpleHTTPServer 8000
+```

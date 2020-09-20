@@ -3,7 +3,6 @@ var options;
 var values;
 var coolist;
 
-
 window.onload = function(){
 
   options = {
@@ -15,7 +14,7 @@ window.onload = function(){
 
   coollist = new List('hacker-list', options, values);
 
-  quickRequest("GET", "out.json", "", true);
+  quickRequest("GET", "./html/out.json", "", true);
 
   //var options = {
   //  valueNames: [ 'name', 'city' ],
@@ -27,8 +26,6 @@ window.onload = function(){
   //  , { name: 'Jonas', city:'Berlin' }
   //];
 
-
-
   //hackerList.add( { name: 'Cooler', city:'Beans' } );
 
   //Sets up a text box (that will be hidden eventually)
@@ -38,8 +35,6 @@ window.onload = function(){
 	//	document.body.appendChild(outerdiv);
 	//}
 	//outerdiv.setAttribute("id", "outText");
-
-
 }
 
 // ---------------------
