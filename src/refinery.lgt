@@ -42,6 +42,8 @@
             )
         }.
     
-    stock_score_json_term(score(Ticker, Score), Ticker:Score).
+    stock_score_json_term(score(Ticker, Score), Ticker : _{name: Name, peers: Peers, score:Score}) :-
+        Ticker::name(Name),
+        Ticker::peers(Peers).
 
 :- end_object.
