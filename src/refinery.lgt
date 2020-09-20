@@ -33,9 +33,10 @@
     write_score_output :-
         scores(Scores),
         meta::map(stock_score_json_term, Scores, JSONscores),
+        logtalk::expand_library_path(root('../out.json'), Path),
         {   dict_create(Dict, _, JSONscores),
             setup_call_cleanup(
-                open('out.json', write, Stream),
+                open(Path, write, Stream),
                 json_write_dict(Stream, Dict),
                 close(Stream)
             )
