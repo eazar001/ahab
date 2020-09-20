@@ -1,9 +1,9 @@
 :- object(stock_factory).
 
     :- info([
-        version is 0:1:0,
+        version is 0:2:0,
         author is 'Ebrahim Azarisooreh',
-        date is 2020-09-07,
+        date is 2020-09-19,
         comment is 'Constructor/destructor for the stock object.'
     ]).
 
@@ -48,9 +48,9 @@
     imports(metric_sort)).
 
     :- info([
-        version is 0:1:0,
+        version is 0:2:0,
         author is 'Ebrahim Azarisooreh',
-        date is 2020-09-03,
+        date is 2020-09-19,
         comment is 'Abstract representation of a common stock security.'
     ]).
 

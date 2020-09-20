@@ -3,6 +3,7 @@
     assertz(logtalk_library_path(root, Root)),
     logtalk::expand_library_path(root(data), Data),
     assertz(logtalk_library_path(data, Data)),
+    use_module(library(http/json)),
     logtalk_load([
         basic_types(loader),
         reader(loader),

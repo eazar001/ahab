@@ -1,9 +1,9 @@
 :- object(equity_extractor).
 
     :- info([
-        version is 0:1:0,
+        version is 0:2:0,
         author is 'Ebrahim Azarisooreh',
-        date is 2020-09-04,
+        date is 2020-09-19,
         comment is 'Extract equities from a Logtalk/Prolog database to instantiate their objects dynamically.'
     ]).
 
