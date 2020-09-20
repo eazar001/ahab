@@ -6,15 +6,15 @@ var coolist;
 window.onload = function(){
 
   options = {
-    valueNames: [ 'ticker', 'score' ],
-    item: '<li><h3 class="ticker"></h3><p class="score"></p></li>'
+    valueNames: [ 'name', 'ticker', 'score' ],
+    item: '<li><h3 class="name"></h3><p class="ticker"></p><p class="score"></p></li>'
   };
 
   values = [];
 
   coollist = new List('hacker-list', options, values);
 
-  quickRequest("GET", "./html/out.json", "", true);
+  quickRequest("GET", "./out.json", "", true);
 
   //var options = {
   //  valueNames: [ 'name', 'city' ],
@@ -46,7 +46,7 @@ function respondObj(objt){
 
   Object.keys(objt).forEach(function(key) {
     var value = objt[key];
-    coollist.add( { ticker: key, score: value } );
+    coollist.add( { name: value.name, ticker: '<a href="https://www.google.com/search?q=stock:'+key+'" target="_blank">'+key+'</a>', score: value.score } );
   });
 
 	// This gets the last bit of online game data
