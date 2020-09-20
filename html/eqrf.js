@@ -47,7 +47,7 @@ function respondObj(objt){
   Object.keys(objt).forEach(function(key) {
     var value = objt[key];
     coollist.add( { name: '<a href="https://www.google.com/search?q=stock:'+key+'" target="_blank">'+value.name+'</a>',
-                    ticker: '<a href="https://www.morningstar.com/stocks/xnas/'+key+'/quote" target="_blank">'+key+'</a>',
+                    ticker: '<a href="https://www.morningstar.com/search?query='+key+'" target="_blank">'+key+'</a>',
                     score: value.score } );
   });
 
