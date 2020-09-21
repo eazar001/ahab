@@ -117,6 +117,32 @@
         pe_score(PEscore),
         price_score(PEscore, PriceScore),
         Score is ProfitMarginScore + TotalCashScore + PriceScore.
+    
+    bound_score(Score0, 5.0) :-
+        Score0 > 5.0,
+        !.
+    bound_score(Score0, 1.0) :-
+        Score0 < 1.0,
+        !.
+    bound_score(Score, Score).
+
+    translate_score(Score0, Score) :-
+        Score0 >= 5.0,
+        Score is Score0 - 4.0,
+        !.
+    translate_score(Score0, Score) :-
+        Score0 >= 4.0,
+        Score is Score0 - 2.0,
+        !.
+    translate_score(Score, Score) :-
+        Score >= 3.0,
+        !.
+    translate_score(Score0, Score) :-
+        Score0 >= 2.0,
+        Score is Score0 + 2.0,
+        !.
+    translate_score(Score0, Score) :-
+        Score is Score0 + 4.0.
 
     compute_total_score(Scores, Score) :-
         catch(
