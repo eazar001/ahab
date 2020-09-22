@@ -142,12 +142,16 @@
         Score0 >= 1.0,
         Score is (2.0 - Score0) + 4.0.
 
+    % not useful quite yet ...
+    % compute_total_score(Scores, Score) :-
+    %     catch(
+    %         compute_scores_with_skewness(Scores, Score),
+    %         error(evaluation_error(undefined), _),
+    %         population::arithmetic_mean(Scores, Score)
+    %     ).
+
     compute_total_score(Scores, Score) :-
-        catch(
-            compute_scores_with_skewness(Scores, Score),
-            error(evaluation_error(undefined), _),
-            population::arithmetic_mean(Scores, Score)
-        ).
+        population::arithmetic_mean(Scores, Score).
     
     compute_scores_with_skewness(Scores, Score) :-
         population::skewness(Scores, Skew),
