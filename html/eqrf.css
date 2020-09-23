@@ -1,0 +1,32 @@
+body {
+  background-color: gray;
+}
+
+.container {
+  text-align: center;
+}
+
+.searchbar {
+  justify-content: center;
+}
+
+.sort {
+  margin: 5px;
+  padding: 5px;
+  border: 1px solid #000;
+  background-color: white;
+}
+
+.list {
+  background-color: white;
+  border-collapse: collapse;
+}
+
+.list td, .list th {
+  padding: 5px;
+  border: 1px solid #000;
+}
+
+.list tr:nth-child(even) {
+  background: lightgray;
+}

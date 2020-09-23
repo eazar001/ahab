@@ -1,6 +1,5 @@
 
-// TODO: Need to make sure that the href isn't pat of the sorting mechanism
-// Might want to organize this in a table like structure way for ease of use
+// TODO: Need to make sure that the href isn't part of the sorting mechanism
 
 var options;
 var values;
@@ -11,7 +10,7 @@ window.onload = function(){
   options = {
     valueNames: [ 'name', 'ticker', 'score' ],
     //item: '<li><h3 class="name"></h3><p class="ticker"></p><p class="score"></p></li>'
-    item: '<tr><td class="name"></td><td class="ticker"></td><td class="score"></td></tr>'
+    item: '<tr class="block"><td class="name"></td><td class="ticker"></td><td class="score"></td></tr>'
   };
 
   values = [];
