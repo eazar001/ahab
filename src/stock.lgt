@@ -128,19 +128,19 @@
 
     translate_score(Score0, Score) :-
         Score0 > 4.0,
-        Score is (5.0 - Score0) + 1.0,
-        !.
+        !,
+        Score is 5.0 - Score0 + 1.0.
     translate_score(Score0, Score) :-
         Score0 > 3.0,
-        Score is (4.0 - Score0) + 2.0,
-        !.
+        !,
+        Score is 4.0 - Score0 + 2.0.
     translate_score(Score0, Score) :-
         Score0 > 2.0,
-        Score is (3.0 - Score0) + 3.0,
-        !.
+        !,
+        Score is 3.0 - Score0 + 3.0.
     translate_score(Score0, Score) :-
         Score0 >= 1.0,
-        Score is (2.0 - Score0) + 4.0.
+        Score is 2.0 - Score0 + 4.0.
 
     % not useful quite yet ...
     % compute_total_score(Scores, Score) :-
