@@ -1,16 +1,22 @@
 
-// TODO: Need to make sure that the href isn't part of the sorting mechanism
-
 var options;
 var values;
 var coolist;
 
+var searchbar;
+
 window.onload = function(){
 
   options = {
-    valueNames: [ 'name', 'ticker', 'score' ],
-    //item: '<li><h3 class="name"></h3><p class="ticker"></p><p class="score"></p></li>'
-    item: '<tr class="block"><td class="name"></td><td class="ticker"></td><td class="score"></td></tr>'
+    valueNames: [ 'name', 'nameurl', 'ticker', 'tickerurl', 'score', 'scorefix' ],
+    item: '<tr class="block">'+
+          '<td class="name" style="display:none;"></td>'+
+          '<td class="nameurl"></td>'+
+          '<td class="ticker" style="display:none;"></td>'+
+          '<td class="tickerurl"></td>'+
+          '<td class="score"></td>'+
+          '<td class="scorefix" style="display:none;"></td>'+
+          '</tr>'
   };
 
   values = [];
@@ -19,25 +25,20 @@ window.onload = function(){
 
   quickRequest("GET", "./out.json", "", true);
 
-  //var options = {
-  //  valueNames: [ 'name', 'city' ],
-  //  item: '<li><h3 class="name"></h3><p class="city"></p></li>'
-  //};
+  // Creates a new search if one isn't made already
+	searchbar = document.getElementById("mysearch");
+	if(searchbar == null){
+		searchbar = document.createElement("input");
+		document.body.appendChild(searchbar);
+	}
 
-  //var values = [
-  //  { name: 'Jonny', city:'Stockholm' }
-  //  , { name: 'Jonas', city:'Berlin' }
-  //];
+	//Sets up the canvas if it isn't set up already
+	searchbar.setAttribute("id", "mysearch");
+  searchbar.setAttribute("onkeyup", "searchRespond(event)");
+}
 
-  //hackerList.add( { name: 'Cooler', city:'Beans' } );
-
-  //Sets up a text box (that will be hidden eventually)
-	//var outerdiv = document.getElementById("outText");
-	//if(outerdiv == null){
-	//	outerdiv = document.createElement("div");
-	//	document.body.appendChild(outerdiv);
-	//}
-	//outerdiv.setAttribute("id", "outText");
+function searchRespond(event){
+  coollist.search(searchbar.value, ['name', 'ticker', 'score']);
 }
 
 // ---------------------
@@ -49,15 +50,14 @@ function respondObj(objt){
 
   Object.keys(objt).forEach(function(key) {
     var value = objt[key];
-    coollist.add( { name: '<a href="https://www.google.com/search?q=stock:'+key+'" target="_blank">'+value.name+'</a>',
-                    ticker: '<a href="https://www.morningstar.com/search?query='+key+'" target="_blank">'+key+'</a>',
-                    score: value.score } );
+    coollist.add( { name: value.name,
+                    nameurl: '<a href="https://www.google.com/search?q=stock:'+key+'" target="_blank">'+value.name+'</a>',
+                    ticker: key,
+                    tickerurl: '<a href="https://www.morningstar.com/search?query='+key+'" target="_blank">'+key+'</a>',
+                    score: value.score,
+                    scorefix: parseInt(value.score*100)+1000000} );
   });
 
-	// This gets the last bit of online game data
-	//if(objt.hasOwnProperty('getData')){
-	//	odata = objt.getData;
-	//}
 }
 
 

@@ -2,6 +2,10 @@ body {
   background-color: gray;
 }
 
+.sort {
+  cursor: pointer;
+}
+
 .container {
   text-align: center;
 }

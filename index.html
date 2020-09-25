@@ -11,10 +11,13 @@
 	<BODY>
 		<div id="hacker-list" class="container">
 			<h1>equity_refinery</h1>
-			<input class="search" />
+			<!-- <input class="search" /> -->
+			<input id="mysearch" />
   		<p>
-				<span class="sort" data-sort="ticker">Sort by ticker</span>
-  			<span class="sort" data-sort="score">Sort by score</span>
+				<button class="sort" data-sort="ticker">Sort by ticker</button>
+				<button class="sort" data-sort="scorefix">Sort by score</button>
+				<!-- <span class="sort" data-sort="ticker">Sort by ticker</span>
+  			<span class="sort" data-sort="score">Sort by score</span> -->
 			</p>
 			<p>
 				<table style="width:100%" class="list"></table>
