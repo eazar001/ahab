@@ -1,12 +1,17 @@
 
+// The List options
 var options;
+// The list values
 var values;
+// The list itself
 var coolist;
-
+// My own custom search bar (that works the same I promise)
 var searchbar;
 
+// When the window opens, do this!
 window.onload = function(){
 
+  // Stores all the options for the list
   options = {
     valueNames: [ 'name', 'nameurl', 'ticker', 'tickerurl', 'score', 'scorefix' ],
     item: '<tr class="block">'+
@@ -19,10 +24,13 @@ window.onload = function(){
           '</tr>'
   };
 
+  // Stores all the values for the list (pretty empty looking)
   values = [];
 
+  // Actually creates the list
   coollist = new List('hacker-list', options, values);
 
+  // This is to invoke the JSON (custom made crap)
   quickRequest("GET", "./out.json", "", true);
 
   // Creates a new search if one isn't made already
@@ -37,6 +45,7 @@ window.onload = function(){
   searchbar.setAttribute("onkeyup", "searchRespond(event)");
 }
 
+// Custom search function to just search on particular rows
 function searchRespond(event){
   coollist.search(searchbar.value, ['name', 'ticker', 'score']);
 }
@@ -48,6 +57,7 @@ function searchRespond(event){
 // This is for handling the server requests
 function respondObj(objt){
 
+  // Goes through all the list items and forms them to my will
   Object.keys(objt).forEach(function(key) {
     var value = objt[key];
     coollist.add( { name: value.name,
@@ -57,9 +67,7 @@ function respondObj(objt){
                     score: value.score,
                     scorefix: parseInt(value.score*100)+1000000} );
   });
-
 }
-
 
 // ----------------------
 // AJAX Communication

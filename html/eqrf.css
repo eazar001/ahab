@@ -1,36 +1,41 @@
+
+/* Changes the background color to gray */
 body {
   background-color: gray;
 }
 
-.sort {
-  cursor: pointer;
-}
-
+/* For conforming the list */
 .container {
   text-align: center;
 }
 
+/* For justifying the search bar */
 .searchbar {
   justify-content: center;
 }
 
+/* For handling the sorting buttons */
 .sort {
+  cursor: pointer;
   margin: 5px;
   padding: 5px;
   border: 1px solid #000;
   background-color: white;
 }
 
+/* For handling the list elements (they are generated) */
 .list {
   background-color: white;
   border-collapse: collapse;
 }
 
+/* For handling the borders arounf the list elements */
 .list td, .list th {
   padding: 5px;
   border: 1px solid #000;
 }
 
+/* For making that cool concise evenly colored list */
 .list tr:nth-child(even) {
   background: lightgray;
 }
