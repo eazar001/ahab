@@ -1,6 +1,4 @@
 
-// TODO: Wait for feedback before doing any cleanup procedures
-
 // The List options
 var options;
 // The list values
@@ -72,9 +70,10 @@ function searchRespond(event){
 
 // When the user clicks on the button, open the modal
 // Used to format the modal text (allowing for some flexibility)
-function buttonRespond(event, name, ticker, description, website){
+function buttonRespond(event, name, ticker, sector, industry, description, website){
   modal.style.display = "block";
   modalText.innerHTML = '<h1>'+name+' ['+ticker+']</h1>'+
+                        '<h4>'+industry+' - '+sector+'</h4>'+
                         '<p>'+description+'</p>'+
                         '<a href="'+website+'" target="_blank">'+website+'</a>';
 }
@@ -114,11 +113,12 @@ function respondObj(objt){
                           //' onclick="buttonRespond(event, \''+value.name+'\', \''+key.toUpperCase()+'\', \''+value.description+'\', \''+value.website+'\' )">',
                     name: value.name,
                     // nameurl: '<a href="https://seekingalpha.com/symbol/'+key+'" target="_blank">'+value.name+'</a>',
-                    nameurl: '<span class="mag" onclick="buttonRespond(event, \''+value.name+'\', \''+key.toUpperCase()+'\', \''+value.description+'\', \''+value.website+'\' )">'+
+                    nameurl: '<span class="mag" onclick="buttonRespond(event, \''+value.name+'\', \''+key.toUpperCase()+'\', \''+value.sector+'\', \''+
+                                                                              value.industry+'\', \''+value.description+'\', \''+value.website+'\' )">'+
                               value.name+' <img src="./html/info.png" alt="'+key+'" height="14px" width="14px" ></span>',
                     ticker: key,
-                    tickerurl: '<a href="https://www.morningstar.com/search?query='+key+'" style="text-decoration:none;color:black;" target="_blank">'+key.toUpperCase()+'</a>',
-                    //tickerurl: key.toUpperCase(),
+                    //tickerurl: '<a href="https://www.morningstar.com/search?query='+key+'" style="text-decoration:none;color:black;" target="_blank">'+key.toUpperCase()+'</a>',
+                    tickerurl: key.toUpperCase(),
                     score: value.score,
                     scorefix: parseInt(value.score*100)+1000000} );
   });
