@@ -120,7 +120,7 @@ function respondObj(objt){
                     //tickerurl: '<a href="https://www.morningstar.com/search?query='+key+'" style="text-decoration:none;color:black;" target="_blank">'+key.toUpperCase()+'</a>',
                     tickerurl: key.toUpperCase(),
                     score: value.score,
-                    scorefix: parseInt(value.score*100)+1000000} );
+                    scorefix: 10000000-(parseInt(value.score*100)+1000000)} );
   });
 }
 
