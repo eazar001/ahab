@@ -102,20 +102,23 @@ function respondObj(objt){
   Object.keys(objt).forEach(function(key) {
     var value = objt[key];
     coollist.add( { link: '<a href="https://www.google.com/search?q=stock:'+key+'" target="_blank">'+
-                          '<img src="./html/google.png" alt="G"></a>'+
+                          '<img src="./html/google.png" alt="G"></a> '+
                           '<a href="https://seekingalpha.com/symbol/'+key+'" target="_blank">'+
-                          '<img src="./html/seeking_alpha.png" alt="S"></a>'+
+                          '<img src="./html/seeking_alpha.png" alt="S"></a> '+
                           //'<a href="https://www.morningstar.com/search?query='+key+'" target="_blank">'+
                           '<a href="https://www.morningstar.com/stocks/'+value.mx+'/'+key+'/quote" target="_blank">'+
-                          '<img src="./html/morning_star.png" alt="M"></a>'+
+                          '<img src="./html/morning_star.png" alt="M"></a> '+
                           '<a href="https://finance.yahoo.com/quote/'+key.replace(".", "")+'" target="_blank">'+
-                          '<img src="./html/yahoo.png" alt="Y"></a>'+
-                          '<img class="mag" src="./html/magnify.png" alt="'+key+'"'+
-                          ' onclick="buttonRespond(event, \''+value.name+'\', \''+key.toUpperCase()+'\', \''+value.description+'\', \''+value.website+'\' )">',
+                          '<img src="./html/yahoo.png" alt="Y"></a> ',
+                          //'<img class="mag" src="./html/magnify.png" alt="'+key+'"'+
+                          //' onclick="buttonRespond(event, \''+value.name+'\', \''+key.toUpperCase()+'\', \''+value.description+'\', \''+value.website+'\' )">',
                     name: value.name,
-                    nameurl: '<a href="https://seekingalpha.com/symbol/'+key+'" target="_blank">'+value.name+'</a>',
+                    // nameurl: '<a href="https://seekingalpha.com/symbol/'+key+'" target="_blank">'+value.name+'</a>',
+                    nameurl: '<span class="mag" onclick="buttonRespond(event, \''+value.name+'\', \''+key.toUpperCase()+'\', \''+value.description+'\', \''+value.website+'\' )">'+
+                              value.name+' <img src="./html/info.png" alt="'+key+'" height="14px" width="14px" ></span>',
                     ticker: key,
-                    tickerurl: '<a href="https://www.morningstar.com/search?query='+key+'" target="_blank">'+key.toUpperCase()+'</a>',
+                    tickerurl: '<a href="https://www.morningstar.com/search?query='+key+'" style="text-decoration:none;color:black;" target="_blank">'+key.toUpperCase()+'</a>',
+                    //tickerurl: key.toUpperCase(),
                     score: value.score,
                     scorefix: parseInt(value.score*100)+1000000} );
   });
