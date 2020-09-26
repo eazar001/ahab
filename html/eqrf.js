@@ -1,4 +1,6 @@
 
+// TODO: Wait for feedback before doing any cleanup procedures
+
 // The List options
 var options;
 // The list values
@@ -8,17 +10,23 @@ var coolist;
 // My own custom search bar (that works the same I promise)
 var searchbar;
 
+// Testing the modal (need to cleanup)
+var modal;
+// Testing for editable text (need to cleanup)
+var modalText;
+
 // When the window opens, do this!
 window.onload = function(){
 
   // Stores all the options for the list
   options = {
-    valueNames: [ 'name', 'nameurl', 'ticker', 'tickerurl', 'score', 'scorefix' ],
+    valueNames: [ 'link', 'name', 'nameurl', 'ticker', 'tickerurl', 'score', 'scorefix' ],
     item: '<tr class="block">'+
           '<td class="name" style="display:none;"></td>'+
           '<td class="nameurl"></td>'+
           '<td class="ticker" style="display:none;"></td>'+
           '<td class="tickerurl"></td>'+
+          '<td class="link"></td>'+
           '<td class="score"></td>'+
           '<td class="scorefix" style="display:none;"></td>'+
           '</tr>'
@@ -44,11 +52,43 @@ window.onload = function(){
 	//Sets up the canvas if it isn't set up already
 	searchbar.setAttribute("id", "mysearch");
   searchbar.setAttribute("onkeyup", "searchRespond(event)");
+
+  modal = document.getElementById("myModal");
+  modalText = document.getElementById("myModalText");
+
+  // Testing code for the modal
+  //var btn = document.getElementById("myBtn");
+  //btn.setAttribute("onclick", "buttonRespond(event, 'test', 'null', 'end')");
+
+  // Allows the modal to close when you click outside of it
+  var span = document.getElementsByClassName("close")[0];
+  span.setAttribute("onclick", "spanRespond(event)");
 }
 
 // Custom search function to just search on particular rows
 function searchRespond(event){
   coollist.search(searchbar.value, ['name', 'ticker', 'score']);
+}
+
+// When the user clicks on the button, open the modal
+// Used to format the modal text (allowing for some flexibility)
+function buttonRespond(event, name, ticker, description, website){
+  modal.style.display = "block";
+  modalText.innerHTML = '<h1>'+name+' ['+ticker+']</h1>'+
+                        '<p>'+description+'</p>'+
+                        '<a href="'+website+'" target="_blank">'+website+'</a>';
+}
+
+// When the user clicks on <span> (x), close the modal
+function spanRespond(event){
+  modal.style.display = "none";
+}
+
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function(event) {
+  if (event.target == modal) {
+    modal.style.display = "none";
+  }
 }
 
 // ---------------------
@@ -60,15 +100,22 @@ function respondObj(objt){
 
   // Goes through all the list items and forms them to my will
   Object.keys(objt).forEach(function(key) {
-    //console.log(key);
-    //console.log(objt[key]);
     var value = objt[key];
-    coollist.add( { name: value.name,
-                    //nameurl: '<a href="https://www.google.com/search?q=stock:'+key+'" target="_blank">'+value.name+'</a>',
+    coollist.add( { link: '<a href="https://www.google.com/search?q=stock:'+key+'" target="_blank">'+
+                          '<img src="./html/google.png" alt="G"></a>'+
+                          '<a href="https://seekingalpha.com/symbol/'+key+'" target="_blank">'+
+                          '<img src="./html/seeking_alpha.png" alt="S"></a>'+
+                          //'<a href="https://www.morningstar.com/search?query='+key+'" target="_blank">'+
+                          '<a href="https://www.morningstar.com/stocks/'+value.mx+'/'+key+'/quote" target="_blank">'+
+                          '<img src="./html/morning_star.png" alt="M"></a>'+
+                          '<a href="https://finance.yahoo.com/quote/'+key.replace(".", "")+'" target="_blank">'+
+                          '<img src="./html/yahoo.png" alt="Y"></a>'+
+                          '<img class="mag" src="./html/magnify.png" alt="'+key+'"'+
+                          ' onclick="buttonRespond(event, \''+value.name+'\', \''+key.toUpperCase()+'\', \''+value.description+'\', \''+value.website+'\' )">',
+                    name: value.name,
                     nameurl: '<a href="https://seekingalpha.com/symbol/'+key+'" target="_blank">'+value.name+'</a>',
                     ticker: key,
-                    //tickerurl: '<a href="https://www.morningstar.com/search?query='+key+'" target="_blank">'+key+'</a>',
-                    tickerurl: '<a href="https://www.morningstar.com/stocks/'+value.mx+'/'+key+'/quote" target="_blank">'+key+'</a>',
+                    tickerurl: '<a href="https://www.morningstar.com/search?query='+key+'" target="_blank">'+key.toUpperCase()+'</a>',
                     score: value.score,
                     scorefix: parseInt(value.score*100)+1000000} );
   });
