@@ -23,7 +23,7 @@
         comment is 'Deletes an object that extends the stock object.'
     ]).
 
-    new(Id, stock(Ticker, Peers, Stats)) :-
+    new(Id, stock(Ticker, Company, Peers, Stats)) :-
         { downcase_atom(Ticker, Id) },
         meta::map(downcase_atom, Peers, DownCasedPeers),
         Clauses = [
@@ -34,7 +34,12 @@
             pb_ratio(Stats.priceToBook),
             div_yield(Stats.dividendYield),
             profit_margin(Stats.profitMargin),
-            total_cash(Stats.totalCash)
+            total_cash(Stats.totalCash),
+            exchange(Company.exchange),
+            industry(Company.industry),
+            website(Company.website),
+            description(Company.description),
+            sector(Company.sector)
         ],
         create_object(Id, [extends(stock)], [], Clauses).
 
@@ -58,6 +63,36 @@
     :- mode(name(-atom), one).
     :- info(name/1, [
         comment is 'Retrieves the name of the company.'
+    ]).
+
+	:- public(exchange/1).
+    :- mode(exchange(-atom), one).
+    :- info(exchange/1, [
+        comment is 'Retrieves the name of the stock exchange that the stock is listen on.'
+    ]).
+
+	:- public(industry/1).
+    :- mode(industry(-atom), one).
+    :- info(industry/1, [
+        comment is 'Retrieves the industry specific to the stock in question.'
+    ]).
+
+	:- public(website/1).
+    :- mode(website(-atom), one).
+    :- info(website/1, [
+        comment is 'Retrieves the company website for the stockk.'
+    ]).
+
+	:- public(description/1).
+    :- mode(description(-atom), one).
+    :- info(description/1, [
+        comment is 'Retrieves the company description for the stock.'
+    ]).
+
+	:- public(sector/1).
+    :- mode(sector(-atom), one).
+    :- info(sector/1, [
+        comment is 'Retrieves the sector for the stock.'
     ]).
 
     :- public(pe_ratio/1).

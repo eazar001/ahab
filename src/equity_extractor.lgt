@@ -25,7 +25,9 @@
             stock_factory::new(_Id, Stock)
         ).
 
-    convert_term(stock(Ticker, Peers, KVs), stock(Ticker, Peers, AdvancedStatsDict)) :-
-        { dict_create(AdvancedStatsDict, _, KVs) }.
+    convert_term(stock(Ticker, Company, Peers, AdvancedStats), stock(Ticker, CompanyDict, Peers, AdvancedStatsDict)) :-
+        {   dict_create(AdvancedStatsDict, _, AdvancedStats),
+            dict_create(CompanyDict, _, Company)
+        }.
 
 :- end_object.
