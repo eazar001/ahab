@@ -65,31 +65,31 @@
         comment is 'Retrieves the name of the company.'
     ]).
 
-	:- public(exchange/1).
+    :- public(exchange/1).
     :- mode(exchange(-atom), one).
     :- info(exchange/1, [
         comment is 'Retrieves the name of the stock exchange that the stock is listen on.'
     ]).
 
-	:- public(industry/1).
+    :- public(industry/1).
     :- mode(industry(-atom), one).
     :- info(industry/1, [
         comment is 'Retrieves the industry specific to the stock in question.'
     ]).
 
-	:- public(website/1).
+    :- public(website/1).
     :- mode(website(-atom), one).
     :- info(website/1, [
         comment is 'Retrieves the company website for the stockk.'
     ]).
 
-	:- public(description/1).
+    :- public(description/1).
     :- mode(description(-atom), one).
     :- info(description/1, [
         comment is 'Retrieves the company description for the stock.'
     ]).
 
-	:- public(sector/1).
+    :- public(sector/1).
     :- mode(sector(-atom), one).
     :- info(sector/1, [
         comment is 'Retrieves the sector for the stock.'
