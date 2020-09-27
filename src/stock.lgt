@@ -152,7 +152,7 @@
         pe_score(PEscore),
         price_score(PEscore, PriceScore),
         Score is ProfitMarginScore + TotalCashScore + PriceScore.
-    
+
     bound_score(Score0, 5.0) :-
         Score0 > 5.0,
         !.
@@ -187,7 +187,7 @@
 
     compute_total_score(Scores, Score) :-
         population::arithmetic_mean(Scores, Score).
-    
+
     compute_scores_with_skewness(Scores, Score) :-
         population::skewness(Scores, Skew),
         abs(Skew) < 1.0,
