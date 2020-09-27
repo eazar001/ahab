@@ -68,19 +68,19 @@
     :- public(exchange/1).
     :- mode(exchange(-atom), one).
     :- info(exchange/1, [
-        comment is 'Retrieves the name of the stock exchange that the stock is listen on.'
+        comment is 'Retrieves the name of the stock exchange that the stock is listed on.'
     ]).
 
     :- public(industry/1).
     :- mode(industry(-atom), one).
     :- info(industry/1, [
-        comment is 'Retrieves the industry specific to the stock in question.'
+        comment is 'Retrieves the industry-type specific to the stock in question.'
     ]).
 
     :- public(website/1).
     :- mode(website(-atom), one).
     :- info(website/1, [
-        comment is 'Retrieves the company website for the stockk.'
+        comment is 'Retrieves the company website for the stock.'
     ]).
 
     :- public(description/1).
@@ -92,7 +92,7 @@
     :- public(sector/1).
     :- mode(sector(-atom), one).
     :- info(sector/1, [
-        comment is 'Retrieves the sector for the stock.'
+        comment is 'Retrieves the sector-type for the stock.'
     ]).
 
     :- public(pe_ratio/1).
