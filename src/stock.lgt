@@ -364,4 +364,12 @@
     total_cash_score(Cash, Score) :-
         Score is 1E-10 * Cash.
 
+    kth_order_stat(Sample, N, X) :-
+        list::msort(Sample, Sample0),
+        list::nth1(N, Sample0, X).
+
+    sum_of_squares(Data, S) :-
+        population::arithmetic_mean(Data, Mean),
+        meta::fold_left({Mean}/[Sum0, X, Sum]>> ( Sum is Sum0 + (X - Mean)^2 ), 0, Data, S).
+
 :- end_object.
