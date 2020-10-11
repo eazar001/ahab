@@ -149,8 +149,9 @@
     score(Score) :-
         total_cash_score(TotalCashScore),
         profit_margin_score(ProfitMarginScore),
-        pe_score(PEscore),
-        price_score(PEscore, PriceScore),
+        pe_score(PEscore0),
+        bound_score(PEscore0, PEscore),
+        value_score(PEscore, PriceScore),
         Score is ProfitMarginScore + TotalCashScore + PriceScore.
 
     bound_score(Score0, 5.0) :-
@@ -196,11 +197,11 @@
     compute_scores_with_skewness(Scores, Score) :-
         population::median(Scores, Score).
 
-    price_score(PEscore, Score) :-
-        PEscore >= 0.0,
+    value_score(PEscore, Score) :-
+        PEscore =< 4.0,
         !,
         growth_focused_price_score(Score).
-    price_score(_, Score) :-
+    value_score(_, Score) :-
         earnings_focused_price_score(Score).
 
     price_score_book_modifier(PBscore, NewPBscore) :-
@@ -213,16 +214,18 @@
     price_score_book_modifier(PBscore, PBscore).
 
     earnings_focused_price_score(Score) :-
-        pe_score(PE),
+        pe_score(PE0),
         peg_score(PEG),
         pb_score(PB0),
+        bound_score(PE0, PE),
         price_score_book_modifier(PB0, PB),
         Score is PE + 0.25 * PEG + PB.
 
     growth_focused_price_score(Score) :-
-        pe_score(PE),
+        pe_score(PE0),
         peg_score(PEG),
         pb_score(PB0),
+        bound_score(PE0, PE),
         price_score_book_modifier(PB0, PB),
         Score is 0.25 * PE + PEG + PB.
 
@@ -279,18 +282,34 @@
         !,
         meta::map(arg(2), Ratios1, Ratios2),
         meta::exclude(>(0.0), Ratios2, Ratios),
-        sample::harmonic_mean(Ratios, Mean),
-        pe_score(PE, Mean, Score).
-    pe_score(0.0).
+        list::length(Ratios, Total),
+        pe_score_by_peer(Ratios, Total, PeerScore),
+        population::harmonic_mean(Ratios, Mean),
+        pe_score_by_average(PE, Mean, AverageScore),
+        population::arithmetic_mean([PeerScore, AverageScore], Score).
+    pe_score(1.0).
 
-    pe_score(Ratio, Ratio, 0.0) :-
-        !.
-    pe_score(Ratio1, Ratio2, Score) :-
-        Ratio1 < Ratio2,
+    pe_score_by_peer(PEs, Total, Score) :-
+        pe_score_by_peer(PEs, 0, Total, Score).
+
+    pe_score_by_peer([], Count, Total, Score) :-
+        Unit is 4.0 / Total,
+        Score is Count * Unit + 1.0.
+    pe_score_by_peer([OtherPE|PEs], Count0, Total, Score) :-
+        ::pe_ratio(PE),
+        1 - PE / OtherPE >= 0.05,
         !,
-        Score is (Ratio2 - Ratio1) / Ratio1.
-    pe_score(Ratio1, Ratio2, Score) :-
-        Score is -(Ratio1 - Ratio2) / Ratio2.
+        Count is Count0 + 1,
+        pe_score_by_peer(PEs, Count, Total, Score).
+    pe_score_by_peer([_|PEs], Count, Total, Score) :-
+        pe_score_by_peer(PEs, Count, Total, Score).
+
+    pe_score_by_average(Ratio, Ratio, 0.0) :-
+        !.
+    pe_score_by_average(Ratio1, Ratio2, 2.0) :-
+        Ratio1 < Ratio2,
+        !.
+    pe_score_by_average(_, _, 1.0).
 
     div_score(Div, Div, 0.0) :-
         !.
