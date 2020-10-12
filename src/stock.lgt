@@ -153,7 +153,7 @@
         bound_score(PEscore0, PEscore),
         value_score(PEscore, ValueScore0),
         meta::map(translate_score, [ValueScore0], [ValueScore]),
-        Score is ProfitMarginScore + TotalCashScore + ValueScore.
+        population::arithmetic_mean([ProfitMarginScore, TotalCashScore, ValueScore], Score).
 
     bound_score(Score0, 5.0) :-
         Score0 > 5.0,
