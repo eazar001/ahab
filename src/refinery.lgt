@@ -42,7 +42,7 @@
             )
         }.
     
-    stock_score_json_term(score(Ticker, Score), Ticker : _{name: Name, peers: Peers, score:Score, exchange: Exchange, industry: Industry, website: Website, description: Description, sector: Sector, mx: Mx}) :-
+    stock_score_json_term(score(Ticker, Score), Ticker : Dict) :-
         Ticker::name(Name),
         Ticker::peers(Peers),
         Ticker::exchange(Exchange),
@@ -50,7 +50,18 @@
         Ticker::website(Website),
         Ticker::description(Description),
         Ticker::sector(Sector),
-        exchange_morningstar(Exchange, Mx).
+        exchange_morningstar(Exchange, Mx),
+        Dict = _{
+            name: Name,
+            peers: Peers,
+            score:Score,
+            exchange: Exchange,
+            industry: Industry,
+            website: Website,
+            description: Description,
+            sector: Sector,
+            mx: Mx
+        }.
     
     exchange_morningstar('NASDAQ', xnas).
     exchange_morningstar('New York Stock Exchange', xnys).
