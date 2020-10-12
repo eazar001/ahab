@@ -151,8 +151,9 @@
         profit_margin_score(ProfitMarginScore),
         pe_score(PEscore0),
         bound_score(PEscore0, PEscore),
-        value_score(PEscore, PriceScore),
-        Score is ProfitMarginScore + TotalCashScore + PriceScore.
+        value_score(PEscore, ValueScore0),
+        meta::map(translate_score, [ValueScore0], [ValueScore]),
+        Score is ProfitMarginScore + TotalCashScore + ValueScore.
 
     bound_score(Score0, 5.0) :-
         Score0 > 5.0,
@@ -204,30 +205,32 @@
     value_score(_, Score) :-
         earnings_focused_value_score(Score).
 
-    price_score_book_modifier(PBscore, NewPBscore) :-
+    value_score_book_modifier(PBscore, NewPBscore) :-
         ::peg_ratio(PEG),
         PEG \= 'None',
         PEG >= 0.0,
         PEG =< 1.0,
         !,
         NewPBscore is 2 * PBscore.
-    price_score_book_modifier(PBscore, PBscore).
+    value_score_book_modifier(PBscore, PBscore).
 
     earnings_focused_value_score(Score) :-
         pe_score(PE0),
-        peg_score(PEG),
+        peg_score(PEG0),
         pb_score(PB0),
-        bound_score(PE0, PE),
-        price_score_book_modifier(PB0, PB),
-        Score is PE + 0.25 * PEG + PB.
+        meta::map(bound_score, [PE0, PEG0, PB0], [PE, PEG, PB1]),
+        value_score_book_modifier(PB1, PB),
+        Score0 is PE + 0.25 * PEG + PB,
+        bound_score(Score0, Score).
 
     growth_focused_value_score(Score) :-
         pe_score(PE0),
-        peg_score(PEG),
+        peg_score(PEG0),
         pb_score(PB0),
-        bound_score(PE0, PE),
-        price_score_book_modifier(PB0, PB),
-        Score is 0.25 * PE + PEG + PB.
+        meta::map(bound_score, [PE0, PEG0, PB0], [PE, PEG, PB1]),
+        value_score_book_modifier(PB1, PB),
+        Score0 is 0.25 * PE + PEG + PB,
+        bound_score(Score0, Score).
 
     sort_pe_ratios(Ratios) :-
         self(Ticker),
