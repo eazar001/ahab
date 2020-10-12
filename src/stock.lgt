@@ -200,9 +200,9 @@
     value_score(PEscore, Score) :-
         PEscore =< 4.0,
         !,
-        growth_focused_price_score(Score).
+        growth_focused_value_score(Score).
     value_score(_, Score) :-
-        earnings_focused_price_score(Score).
+        earnings_focused_value_score(Score).
 
     price_score_book_modifier(PBscore, NewPBscore) :-
         ::peg_ratio(PEG),
@@ -213,7 +213,7 @@
         NewPBscore is 2 * PBscore.
     price_score_book_modifier(PBscore, PBscore).
 
-    earnings_focused_price_score(Score) :-
+    earnings_focused_value_score(Score) :-
         pe_score(PE0),
         peg_score(PEG),
         pb_score(PB0),
@@ -221,7 +221,7 @@
         price_score_book_modifier(PB0, PB),
         Score is PE + 0.25 * PEG + PB.
 
-    growth_focused_price_score(Score) :-
+    growth_focused_value_score(Score) :-
         pe_score(PE0),
         peg_score(PEG),
         pb_score(PB0),
