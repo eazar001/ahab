@@ -210,3 +210,10 @@ function httpRequest(reqType, url, asynch, send){
 	else
 		alert("There is a problem with the AJAX features in your browser");
 }
+
+function calculateInvestment(rate, principal, contributions, periods, time) {
+  var base = 1 + rate / periods;
+  var nt = periods * time;
+  alert((principal * base ** nt) + contributions * (base ** (nt + 1) - base) / base);
+  return (principal * base ** nt) + contributions * (base ** (nt + 1) - base) / base;
+}
