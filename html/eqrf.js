@@ -214,6 +214,6 @@ function httpRequest(reqType, url, asynch, send){
 function calculateInvestment(rate, principal, contributions, periods, time) {
   var base = 1 + rate / periods;
   var nt = periods * time;
-  alert((principal * base ** nt) + contributions * (base ** (nt + 1) - base) / base);
-  return (principal * base ** nt) + contributions * (base ** (nt + 1) - base) / base;
+  alert((principal * base ** nt) + contributions * (base ** (nt + 1) - base) / rate);
+  return (principal * base ** nt) + contributions * (base ** (nt + 1) - base) / rate;
 }
