@@ -214,20 +214,16 @@ function httpRequest(reqType, url, asynch, send){
 function calculateInvestment(rate, principal, contributions, periods, time) {
   var base = 1 + rate / periods;
   var nt = periods * time;
-  alert((principal * base ** nt) + contributions * (base ** (nt + 1) - base) / rate);
+
   return (principal * base ** nt) + contributions * (base ** (nt + 1) - base) / rate;
 }
 
 function calculateAnnualizedInvestment(rate, principal, contributions, periods, time) {
-  var base = 1 + rate / periods;
   var years = [];
-  var amt = principal;
 
   for(i = 0; i < time; ++i) {
-    amt = (amt + contributions) * base;
-    years.push(amt);
+    years.push(calculateInvestment(rate, principal, contributions, periods, i + 1));
   }
-
 
   return years;
 }
