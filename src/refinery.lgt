@@ -51,6 +51,7 @@
         Ticker::description(Description),
         Ticker::sector(Sector),
         exchange_morningstar(Exchange, Mx),
+        !,
         Dict = _{
             name: Name,
             peers: Peers,
@@ -63,8 +64,8 @@
             mx: Mx
         }.
     
-    exchange_morningstar('NASDAQ', xnas) :- !.
-    exchange_morningstar('New York Stock Exchange', xnys) :- !.
+    exchange_morningstar('NASDAQ', xnas).
+    exchange_morningstar('New York Stock Exchange', xnys).
     exchange_morningstar(_, xyns).
 
 :- end_object.
