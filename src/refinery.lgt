@@ -28,7 +28,7 @@
             ),
             Scores0
         ),
-        list::sort(::score_sort, Scores0, Scores).
+        list::msort(::score_sort, Scores0, Scores).
 
     write_score_output :-
         scores(Scores),
@@ -54,7 +54,7 @@
         Dict = _{
             name: Name,
             peers: Peers,
-            score:Score,
+            score: Score,
             exchange: Exchange,
             industry: Industry,
             website: Website,
@@ -63,7 +63,8 @@
             mx: Mx
         }.
     
-    exchange_morningstar('NASDAQ', xnas).
-    exchange_morningstar('New York Stock Exchange', xnys).
+    exchange_morningstar('NASDAQ', xnas) :- !.
+    exchange_morningstar('New York Stock Exchange', xnys) :- !.
+    exchange_morningstar(_, xyns).
 
 :- end_object.

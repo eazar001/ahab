@@ -23,16 +23,19 @@
         comment is 'Deletes an object that extends the stock object.'
     ]).
 
-    new(Id, stock(Ticker, Company, Peers, Stats)) :-
-        { downcase_atom(Ticker, Id) },
-        meta::map(downcase_atom, Peers, DownCasedPeers),
+    new(Ticker, stock(Ticker, Company, Peers, Stats)) :-
+        catch(
+            DivYield = Stats.dividendYield,
+            error(existence_error(key, _, _), _),
+            DivYield = 'None'
+        ),
         Clauses = [
             name(Stats.companyName),
-            peers(DownCasedPeers),
+            peers(Peers),
             pe_ratio(Stats.peRatio),
             peg_ratio(Stats.pegRatio),
             pb_ratio(Stats.priceToBook),
-            div_yield(Stats.dividendYield),
+            div_yield(DivYield),
             profit_margin(Stats.profitMargin),
             total_cash(Stats.totalCash),
             exchange(Company.exchange),
@@ -41,7 +44,7 @@
             description(Company.description),
             sector(Company.sector)
         ],
-        create_object(Id, [extends(stock)], [], Clauses).
+        create_object(Ticker, [extends(stock)], [], Clauses).
 
     delete(Id) :-
         extends_object(Id, stock),
@@ -247,7 +250,7 @@
             ),
             Ratios0
         ),
-        list::sort(::pe_sort, Ratios0, Ratios).
+        list::msort(::pe_sort, Ratios0, Ratios).
 
     sort_div_rankings(Yields) :-
         self(Ticker),
@@ -261,7 +264,7 @@
             ),
             Yields0
         ),
-        list::sort(::div_sort, Yields0, Yields).
+        list::msort(::div_sort, Yields0, Yields).
 
     profit_margin_score(Score) :-
         ::profit_margin(Margin),

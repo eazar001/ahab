@@ -65,6 +65,6 @@
     score_sort(<, score(_, S1), score(_, S2)) :-
         S1 > S2,
         !.
-    score_sort(=, score(_, S1), score(_, S1)).
+    score_sort(=, score(_, _), score(_, _)).
 
 :- end_category.
