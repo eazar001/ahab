@@ -59,10 +59,10 @@
     div_sort(=, div_yield(_, _), div_yield(_, _)).
 
     % sort stocks by top level score
-    score_sort(>, score(_, S1), score(_, S2)) :-
+    score_sort(<, score(_, S1), score(_, S2)) :-
         S1 < S2,
         !.
-    score_sort(<, score(_, S1), score(_, S2)) :-
+    score_sort(>, score(_, S1), score(_, S2)) :-
         S1 > S2,
         !.
     score_sort(=, score(_, _), score(_, _)).
