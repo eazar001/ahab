@@ -28,7 +28,10 @@
             ),
             Scores0
         ),
-        list::msort(::score_sort, Scores0, Scores).
+        list::length(Scores0, N),
+        Top10Percent is floor(0.10 * N),
+        list::msort(::score_sort, Scores0, Scores1),
+        list::take(Top10Percent, Scores1, Scores).
 
     write_score_output :-
         scores(Scores),
