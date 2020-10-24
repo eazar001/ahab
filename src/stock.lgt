@@ -25,7 +25,7 @@
 
     new(Ticker, stock(Ticker, Company, Peers, Stats)) :-
         catch(
-            DivYield = Stats.dividendYield,
+            retrieve(dividendYield, Stats, DivYield),
             error(existence_error(key, _, _), _),
             DivYield = 'None'
         ),
@@ -45,6 +45,8 @@
             sector(Company.sector)
         ],
         create_object(Ticker, [extends(stock)], [], Clauses).
+    
+    retrieve(Key, Dict, Dict.Key).
 
     delete(Id) :-
         extends_object(Id, stock),
