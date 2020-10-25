@@ -212,14 +212,14 @@
     value_score(_, Score) :-
         earnings_focused_value_score(Score).
 
-    value_score_book_modifier(PBscore, NewPBscore) :-
+    value_score_book_modifier(PBscore, PBscore) :-
         ::peg_ratio(PEG),
         PEG \= 'None',
         PEG >= 0.0,
         PEG =< 1.0,
-        !,
-        NewPBscore is 4 * PBscore.
-    value_score_book_modifier(PBscore, PBscore).
+        !.
+    value_score_book_modifier(PBscore, NewPBscore) :-
+        NewPBscore is 2 * PBscore.
 
     earnings_focused_value_score(Score) :-
         pe_score(PE0),
