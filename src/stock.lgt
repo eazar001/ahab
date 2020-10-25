@@ -152,13 +152,13 @@
     ]).
 
     score(Score) :-
-        total_cash_score(TotalCashScore),
-        profit_margin_score(ProfitMarginScore),
+        % total_cash_score(TotalCashScore),
+        % profit_margin_score(ProfitMarginScore),
         pe_score(PEscore0),
         bound_score(PEscore0, PEscore),
         value_score(PEscore, ValueScore0),
         meta::map(translate_score, [ValueScore0], [ValueScore]),
-        population::arithmetic_mean([ProfitMarginScore, TotalCashScore, ValueScore], Score0),
+        population::arithmetic_mean([ValueScore], Score0),
         format(atom(ScoreAtom), '~1f', [Score0]),
         atom_number(ScoreAtom, Score).
 
@@ -288,6 +288,7 @@
         self(Self),
         sort_pe_ratios(Ratios0),
         list::selectchk(pe_rank(Self, PE), Ratios0, Ratios1),
+        PE >= 0.0,
         \+ list::empty(Ratios1),
         !,
         meta::map(arg(2), Ratios1, Ratios2),
@@ -295,8 +296,8 @@
         list::length(Ratios, Total),
         pe_score_by_peer(Ratios, Total, PeerScore),
         population::harmonic_mean(Ratios, Mean),
-        pe_score_by_average(PE, Mean, AverageScore),
-        population::arithmetic_mean([PeerScore, AverageScore], Score).
+        pe_bonus_by_average(PE, Mean, AverageBonus),
+        Score is AverageBonus + PeerScore.
     pe_score(1.0).
 
     pe_score_by_peer(PEs, Total, Score) :-
@@ -304,22 +305,29 @@
 
     pe_score_by_peer([], Count, Total, Score) :-
         Unit is 4.0 / Total,
-        Score is Count * Unit + 1.0.
+        Score is Count * Unit.
     pe_score_by_peer([OtherPE|PEs], Count0, Total, Score) :-
         ::pe_ratio(PE),
-        1 - PE / OtherPE >= 0.05,
+        OtherPE >= 0.0,
+        OtherPE > PE,
+        PE / OtherPE >= 0.15,
+        !,
+        Count is Count0 + 1,
+        pe_score_by_peer(PEs, Count, Total, Score).
+    pe_score_by_peer([OtherPE|PEs], Count0, Total, Score) :-
+        OtherPE < 0.0,
         !,
         Count is Count0 + 1,
         pe_score_by_peer(PEs, Count, Total, Score).
     pe_score_by_peer([_|PEs], Count, Total, Score) :-
         pe_score_by_peer(PEs, Count, Total, Score).
 
-    pe_score_by_average(Ratio, Ratio, 0.0) :-
+    pe_bonus_by_average(Ratio, Ratio, 0.0) :-
         !.
-    pe_score_by_average(Ratio1, Ratio2, 2.0) :-
+    pe_bonus_by_average(Ratio1, Ratio2, 1.0) :-
         Ratio1 < Ratio2,
         !.
-    pe_score_by_average(_, _, 1.0).
+    pe_bonus_by_average(_, _, 0.0).
 
     div_score(Div, Div, 0.0) :-
         !.
