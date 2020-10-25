@@ -218,7 +218,7 @@
         PEG >= 0.0,
         PEG =< 1.0,
         !,
-        NewPBscore is 2 * PBscore.
+        NewPBscore is 4 * PBscore.
     value_score_book_modifier(PBscore, PBscore).
 
     earnings_focused_value_score(Score) :-
@@ -227,7 +227,7 @@
         pb_score(PB0),
         meta::map(bound_score, [PE0, PEG0, PB0], [PE, PEG, PB1]),
         value_score_book_modifier(PB1, PB),
-        Score0 is PE + 0.25 * PEG + PB,
+        Score0 is (PE + 0.25 * PEG + PB) / 3,
         bound_score(Score0, Score).
 
     growth_focused_value_score(Score) :-
@@ -236,7 +236,7 @@
         pb_score(PB0),
         meta::map(bound_score, [PE0, PEG0, PB0], [PE, PEG, PB1]),
         value_score_book_modifier(PB1, PB),
-        Score0 is 0.25 * PE + PEG + PB,
+        Score0 is (0.25 * PE + PEG + PB) / 3,
         bound_score(Score0, Score).
 
     sort_pe_ratios(Ratios) :-
@@ -341,49 +341,35 @@
     peg_score(Score) :-
         ::peg_ratio(Ratio),
         Ratio \== 'None',
-        !,
-        peg_score(Ratio, Score).
-    peg_score(0.0).
-
-    peg_score(1.0, 0.0) :-
-        !.
-    peg_score(Ratio, Score) :-
         Ratio >= 0.0,
         !,
-        Score is 1.0 - Ratio.
+        peg_score(Ratio, Score).
+    peg_score(1.0).
+
+    peg_score(Ratio, 1.0) :-
+        Ratio >= 1.0,
+        !.
     peg_score(Ratio, Score) :-
-        Ratio < 0.0,
-        Score is 0.02 * Ratio.
+        Score is 4 - Ratio / 0.25 + 1.0.
 
     pb_score(Score) :-
         ::pb_ratio(Ratio),
         Ratio \== 'None',
         pb_score(Ratio, Score).
 
-    pb_score(3.0, 0.0) :-
+    pb_score(3.0, 2.0) :-
+        !.
+    pb_score(Ratio, 3.0) :-
+        Ratio > 1.0,
+        !.
+    pb_score(1.0, 3.5) :-
         !.
     pb_score(Ratio, Score) :-
-        Ratio > 3.0,
-        !,
-        Score is -0.02 * (Ratio - 3.0).
-    pb_score(Ratio, Score) :-
-        Ratio < 3.0,
-        Ratio >= 2.0,
-        !,
-        Score is 0.5 * (3.0 - Ratio).
-    pb_score(Ratio, Score) :-
-        Ratio < 2.0,
-        Ratio >= 1.0,
-        !,
-        Score is 0.5 + 0.5 * (2.0 - Ratio).
-    pb_score(Ratio, Score) :-
-        Ratio > 0.0,
+        Ratio >= 0.0,
         Ratio < 1.0,
         !,
-        Score is 2 * (1.0 - Ratio).
-    pb_score(Ratio, Score) :-
-        Ratio < 0.0,
-        Score is 0.25 * Ratio.
+        Score is 4 - Ratio / 0.25 + 1.0.
+    pb_score(_, 1.0).
 
     total_cash_score(Score) :-
         ::total_cash(Cash),
