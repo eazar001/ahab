@@ -350,7 +350,7 @@
         Ratio >= 1.0,
         !.
     peg_score(Ratio, Score) :-
-        Score is (4 - Ratio / 4) + 1.0.
+        Score is (4 - Ratio) + 1.0.
 
     pb_score(Score) :-
         ::pb_ratio(Ratio),
@@ -369,7 +369,7 @@
         Ratio >= 0.0,
         Ratio < 1.0,
         !,
-        Score is (4 - Ratio / 4) + 1.0.
+        Score is (4 - Ratio) + 1.0.
     pb_score(_, 1.0).
 
     total_cash_score(Score) :-
