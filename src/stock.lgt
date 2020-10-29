@@ -227,7 +227,7 @@
         pb_score(PB0),
         meta::map(bound_score, [PE0, PEG0, PB0], [PE, PEG, PB1]),
         value_score_book_modifier(PB1, PB),
-        Score0 is (PE + 0.25 * PEG + PB) / 3,
+        Score0 is (1.25 * PE + PEG + PB) / 3,
         bound_score(Score0, Score).
 
     growth_focused_value_score(Score) :-
@@ -236,7 +236,7 @@
         pb_score(PB0),
         meta::map(bound_score, [PE0, PEG0, PB0], [PE, PEG, PB1]),
         value_score_book_modifier(PB1, PB),
-        Score0 is (0.25 * PE + PEG + PB) / 3,
+        Score0 is (PE + 1.25 * PEG + PB) / 3,
         bound_score(Score0, Score).
 
     sort_pe_ratios(Ratios) :-
