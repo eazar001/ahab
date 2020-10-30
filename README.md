@@ -1,5 +1,5 @@
-Equity Refinery
----------------
+Ahab
+----
 
 An automated stock screener, to score candidates for the highest value stocks in a given set.
 
