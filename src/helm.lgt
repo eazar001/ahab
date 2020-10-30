@@ -1,4 +1,4 @@
-:- object(refinery,
+:- object(helm,
     imports(metric_sort)).
 
     :- info([

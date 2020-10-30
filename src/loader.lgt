@@ -11,9 +11,9 @@
         statistics(loader),
         metric_sort,
         stock,
-        refinery,
+        helm,
         equity_extractor
     ], [optimize(on)]),
     equity_extractor::extract_and_load(data('equities.lgt')),
-    refinery::write_score_output
+    helm::write_score_output
 )).
