@@ -38,6 +38,7 @@
             debt_to_equity_ratio(Stats.debtToEquity),
             div_yield(DivYield),
             profit_margin(Stats.profitMargin),
+            revenue(Stats.revenue),
             total_cash(Stats.totalCash),
             exchange(Company.exchange),
             industry(Company.industry),
@@ -421,6 +422,14 @@
         !.
     total_cash_score(Cash, Score) :-
         Score is 1E-10 * Cash.
+    
+    % net income, net earnings
+    net_income(Net) :-
+        ::profit_margin(ProfitMargin),
+        ::revenue(Revenue),
+        ProfitMargin \== 'None',
+        ProfitMargin > 0.0,
+        Net is ProfitMargin * Revenue.
 
     kth_order_stat(Sample, N, X) :-
         list::msort(Sample, Sample0),
