@@ -35,6 +35,7 @@
             pe_ratio(Stats.peRatio),
             peg_ratio(Stats.pegRatio),
             pb_ratio(Stats.priceToBook),
+            debt_to_equity_ratio(Stats.debtToEquity),
             div_yield(DivYield),
             profit_margin(Stats.profitMargin),
             total_cash(Stats.totalCash),
@@ -116,6 +117,12 @@
     :- mode(pb_ratio(-float), one).
     :- info(pb_ratio/1, [
         comment is 'Retrieves the price to book value (assets minus liabilities) per share ratio.'
+    ]).
+
+    :- public(debt_to_equity_ratio/1).
+    :- mode(debt_to_equity_ratio(-float), one).
+    :- info(debt_to_equity_ratio/1, [
+        comment is 'Retrives the amount of liabilities relative to the shareholder''s equity.'
     ]).
 
     :- public(peers/1).
@@ -225,18 +232,20 @@
         pe_score(PE0),
         peg_score(PEG0),
         pb_score(PB0),
-        meta::map(bound_score, [PE0, PEG0, PB0], [PE, PEG, PB1]),
+        debt_to_equity_score(DE0),
+        meta::map(bound_score, [PE0, PEG0, PB0, DE0], [PE, PEG, PB1, DE]),
         value_score_book_modifier(PB1, PB),
-        Score0 is (1.25 * PE + PEG + PB) / 3,
+        Score0 is (1.25 * PE + PEG + PB + DE) / 4,
         bound_score(Score0, Score).
 
     growth_focused_value_score(Score) :-
         pe_score(PE0),
         peg_score(PEG0),
         pb_score(PB0),
-        meta::map(bound_score, [PE0, PEG0, PB0], [PE, PEG, PB1]),
+        debt_to_equity_score(DE0),
+        meta::map(bound_score, [PE0, PEG0, PB0, DE0], [PE, PEG, PB1, DE]),
         value_score_book_modifier(PB1, PB),
-        Score0 is (PE + 1.25 * PEG + PB) / 3,
+        Score0 is (PE + 1.25 * PEG + PB + DE) / 4,
         bound_score(Score0, Score).
 
     sort_pe_ratios(Ratios) :-
@@ -371,6 +380,28 @@
         !,
         Score is (4 - Ratio) + 1.0.
     pb_score(_, 1.0).
+
+    debt_to_equity_score(Score) :-
+        ::debt_to_equity_ratio(Ratio),
+        Ratio >= 0.0,
+        !,
+        debt_to_equity_score(Ratio, Score).
+
+    debt_to_equity_score(1.0).
+
+    debt_to_equity_score(Ratio, 5.0) :-
+        Ratio =< 1.0,
+        !.
+    debt_to_equity_score(Ratio, 4.0) :-
+        Ratio =< 1.5,
+        !.
+    debt_to_equity_score(Ratio, 3.0) :-
+        Ratio =< 2.0,
+        !.
+    debt_to_equity_score(Ratio, 2.0) :-
+        Ratio =< 2.5,
+        !.
+    debt_to_equity_score(_, 1.0).
 
     total_cash_score(Score) :-
         ::total_cash(Cash),
