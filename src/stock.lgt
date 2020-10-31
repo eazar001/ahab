@@ -383,10 +383,13 @@
 
     debt_to_equity_score(Score) :-
         ::debt_to_equity_ratio(Ratio),
+        Ratio \== 'None',
         Ratio >= 0.0,
         !,
         debt_to_equity_score(Ratio, Score).
-
+    debt_to_equity_score(3.0) :-
+        ::debt_to_equity_ratio('None'),
+        !.
     debt_to_equity_score(1.0).
 
     debt_to_equity_score(Ratio, 5.0) :-
