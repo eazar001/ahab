@@ -308,25 +308,40 @@
         peer_profit_margins(Margins),
         population::arithmetic_mean(Margins, AverageMargin),
         profit_margin_score(Margin, AverageMargin, Score).
-    profit_margin_score(3.0).
-
-    profit_margin_score(Margin, AverageMargin, 2.0) :-
-        Lower is 0.98 * AverageMargin,
-        Margin >= Lower,
-        Margin =< AverageMargin,
+    profit_margin_score(3.0) :-
+        ::profit_margin('None'),
         !.
+    profit_margin(1.0).
+
     profit_margin_score(Margin, AverageMargin, 3.0) :-
         Lower is 0.95 * AverageMargin,
+        Upper is 1.05 * AverageMargin,
         Margin >= Lower,
-        Margin =< AverageMargin,
+        Margin =< Upper,
+        !.
+    profit_margin_score(Margin, AverageMargin, 3.5) :-
+        Upper is 1.05 * AverageMargin,
+        Margin >= AverageMargin,
+        Margin =< Upper,
         !.
     profit_margin_score(Margin, AverageMargin, 4.0) :-
-        Lower is 0.10 * AverageMargin,
+        Lower is 1.05 * AverageMargin,
+        Upper is 1.08 * AverageMargin,
         Margin >= Lower,
-        Margin =< AverageMargin,
+        Margin =< Upper,
+        !.
+    profit_margin_score(Margin, AverageMargin, 4.5) :-
+        Lower is 1.05 * AverageMargin,
+        Upper is 1.10 * AverageMargin,
+        Margin >= Lower,
+        Margin =< Upper,
         !.
     profit_margin_score(Margin, AverageMargin, 5.0) :-
-        Margin < AverageMargin,
+        Margin > AverageMargin,
+        !.
+    profit_margin_score(Margin, AverageMargin, 2.0) :-
+        Lower is 0.95 * AverageMargin,
+        Margin < Lower,
         !.
     profit_margin_score(_, _, 1.0).
 
