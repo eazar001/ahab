@@ -47,7 +47,7 @@
             sector(Company.sector)
         ],
         create_object(Ticker, [extends(stock)], [], Clauses).
-    
+
     retrieve(Key, Dict, Dict.Key).
 
     delete(Id) :-
@@ -166,13 +166,12 @@
     ]).
 
     score(Score) :-
-        % total_cash_score(TotalCashScore),
-        % profit_margin_score(ProfitMarginScore),
         pe_score(PEscore0),
         bound_score(PEscore0, PEscore),
         value_score(PEscore, ValueScore0),
-        meta::map(translate_score, [ValueScore0], [ValueScore]),
-        population::arithmetic_mean([ValueScore], Score0),
+        growth_score(GrowthScore0),
+        meta::map(translate_score, [ValueScore0, GrowthScore0], [ValueScore, GrowthScore]),
+        population::arithmetic_mean([ValueScore, GrowthScore], Score0),
         format(atom(ScoreAtom), '~1f', [Score0]),
         atom_number(ScoreAtom, Score).
 
@@ -218,6 +217,11 @@
         population::arithmetic_mean(Scores, Score).
     compute_scores_with_skewness(Scores, Score) :-
         population::median(Scores, Score).
+
+    growth_score(Score) :-
+        profit_margin_score(ProfitMarginScore0),
+        meta::map(bound_score, [ProfitMarginScore0], [ProfitMarginScore]),
+        population::arithmetic_mean([ProfitMarginScore], Score).
 
     value_score(PEscore, Score) :-
         PEscore =< 4.0,
@@ -284,21 +288,47 @@
         ),
         list::msort(::div_sort, Yields0, Yields).
 
+    peer_profit_margins(Margins) :-
+        ::peers(Peers),
+        findall(
+            Margin,
+            (   list::member(Peer, Peers),
+                extends_object(Peer, stock),
+                Peer::profit_margin(Margin),
+                Margin \== 'None'
+            ),
+            Margins
+        ).
+
     profit_margin_score(Score) :-
         ::profit_margin(Margin),
         Margin \== 'None',
+        Margin > 0.0,
         !,
-        profit_margin_score(Margin, Score).
-    profit_margin_score(0.0).
+        peer_profit_margins(Margins),
+        population::arithmetic_mean(Margins, AverageMargin),
+        profit_margin_score(Margin, AverageMargin, Score).
+    profit_margin_score(3.0).
 
-    profit_margin_score(0.0, -0.25) :-
+    profit_margin_score(Margin, AverageMargin, 2.0) :-
+        Lower is 0.98 * AverageMargin,
+        Margin >= Lower,
+        Margin =< AverageMargin,
         !.
-    profit_margin_score(Margin, Score) :-
-        Margin < 0.0,
-        !,
-        Score is 0.25 + Margin * 0.25.
-    profit_margin_score(Margin, Margin) :-
-        Margin > 0.0.
+    profit_margin_score(Margin, AverageMargin, 3.0) :-
+        Lower is 0.95 * AverageMargin,
+        Margin >= Lower,
+        Margin =< AverageMargin,
+        !.
+    profit_margin_score(Margin, AverageMargin, 4.0) :-
+        Lower is 0.10 * AverageMargin,
+        Margin >= Lower,
+        Margin =< AverageMargin,
+        !.
+    profit_margin_score(Margin, AverageMargin, 5.0) :-
+        Margin < AverageMargin,
+        !.
+    profit_margin_score(_, _, 1.0).
 
     pe_score(Score) :-
         self(Self),
@@ -428,7 +458,7 @@
         !.
     total_cash_score(Cash, Score) :-
         Score is 1E-10 * Cash.
-    
+
     % net income, net earnings
     net_income(Net) :-
         ::profit_margin(ProfitMargin),
