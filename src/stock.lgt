@@ -144,6 +144,12 @@
         comment is 'Retrieves the profit margin as a proportion.'
     ]).
 
+	:- public(revenue/1).
+    :- mode(revenue(-float), one).
+    :- info(revenue/1, [
+        comment is 'Business income generated from normal business activities such as the sale of goods and services.'
+    ]).
+
     :- public(total_cash/1).
     :- mode(total_cash(-integer), one).
     :- info(total_cash/1, [
