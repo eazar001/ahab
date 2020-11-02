@@ -232,7 +232,7 @@
 
     growth_score(Score) :-
         profit_margin_score(ProfitMarginScore0),
-        stock_peformance_score(PerformanceScore0),
+        stock_performance_score(PerformanceScore0),
         meta::map(bound_score, [ProfitMarginScore0, PerformanceScore0], [ProfitMarginScore, PerformanceScore]),
         population::arithmetic_mean([ProfitMarginScore, PerformanceScore], Score).
 
@@ -313,41 +313,41 @@
             Margins
         ).
 
-    stock_peformance_score(Score) :-
+    stock_performance_score(Score) :-
         ::year5_change(Change),
         Change \== 'None',
         Change > 0.0,
         !,
-        stock_peformance_score(Change, Score).
-    stock_peformance_score(3.0) :-
+        stock_performance_score(Change, Score).
+    stock_performance_score(3.0) :-
         ::year5_change('None'),
         !.
-    stock_peformance_score(1.0).
+    stock_performance_score(1.0).
 
-    stock_peformance_score(Change, 2.0) :-
+    stock_performance_score(Change, 2.0) :-
         Change >= 1.25,
         Change < 1.50,
         !.
-    stock_peformance_score(Change, 3.0) :-
+    stock_performance_score(Change, 3.0) :-
         Change >= 1.50,
         Change < 1.61,
         !.
-    stock_peformance_score(Change, 3.5) :-
+    stock_performance_score(Change, 3.5) :-
         Change >= 1.61,
         Change < 2.0,
         !.
-    stock_peformance_score(Change, 4.0) :-
+    stock_performance_score(Change, 4.0) :-
         Change >= 2.0,
         Change < 2.0113,
         !.
-    stock_peformance_score(Change, 4.5) :-
+    stock_performance_score(Change, 4.5) :-
         Change >= 2.0113,
         Change < 2.25,
         !.
-    stock_peformance_score(Change, 5.0) :-
+    stock_performance_score(Change, 5.0) :-
         Change >= 2.25,
         !.
-    stock_peformance_score(_, 1.0).
+    stock_performance_score(_, 1.0).
 
     profit_margin_score(Score) :-
         ::profit_margin(Margin),
