@@ -132,7 +132,7 @@
         comment is 'Retrives the amount of liabilities relative to the shareholder''s equity.'
     ]).
 
-	:- public(year5_change/1).
+    :- public(year5_change/1).
     :- mode(year5_change(-float), one).
     :- info(year5_change/1, [
         comment is 'A proportion representing the percent change in stock price over 5 years.'
@@ -323,7 +323,7 @@
         ::year5_change('None'),
         !.
     stock_peformance_score(1.0).
-    
+
     stock_peformance_score(Change, 2.0) :-
         Change >= 1.25,
         Change < 1.50,
