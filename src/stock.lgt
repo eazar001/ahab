@@ -29,6 +29,11 @@
             error(existence_error(key, _, _), _),
             DivYield = 'None'
         ),
+        catch(
+            retrieve(year5ChangePercent, Stats, Year5Change),
+            error(existence_error(key, _, _), _),
+            Year5Change = 'None'
+        ),
         Clauses = [
             name(Stats.companyName),
             peers(Peers),
@@ -38,6 +43,7 @@
             debt_to_equity_ratio(Stats.debtToEquity),
             div_yield(DivYield),
             profit_margin(Stats.profitMargin),
+            year5_change(Year5Change),
             revenue(Stats.revenue),
             total_cash(Stats.totalCash),
             exchange(Company.exchange),
@@ -124,6 +130,12 @@
     :- mode(debt_to_equity_ratio(-float), one).
     :- info(debt_to_equity_ratio/1, [
         comment is 'Retrives the amount of liabilities relative to the shareholder''s equity.'
+    ]).
+
+	:- public(year5_change/1).
+    :- mode(year5_change(-float), one).
+    :- info(year5_change/1, [
+        comment is 'A proportion representing the percent change in stock price over 5 years.'
     ]).
 
     :- public(peers/1).
@@ -220,8 +232,9 @@
 
     growth_score(Score) :-
         profit_margin_score(ProfitMarginScore0),
-        meta::map(bound_score, [ProfitMarginScore0], [ProfitMarginScore]),
-        population::arithmetic_mean([ProfitMarginScore], Score).
+        stock_peformance_score(PerformanceScore0),
+        meta::map(bound_score, [ProfitMarginScore0, PerformanceScore0], [ProfitMarginScore, PerformanceScore]),
+        population::arithmetic_mean([ProfitMarginScore, PerformanceScore], Score).
 
     value_score(PEscore, Score) :-
         PEscore =< 4.0,
@@ -300,6 +313,42 @@
             Margins
         ).
 
+    stock_peformance_score(Score) :-
+        ::year5_change(Change),
+        Change \== 'None',
+        Change > 0.0,
+        !,
+        stock_peformance_score(Change, Score).
+    stock_peformance_score(3.0) :-
+        ::year5_change('None'),
+        !.
+    stock_peformance_score(1.0).
+    
+    stock_peformance_score(Change, 2.0) :-
+        Change >= 1.25,
+        Change < 1.50,
+        !.
+    stock_peformance_score(Change, 3.0) :-
+        Change >= 1.50,
+        Change < 1.61,
+        !.
+    stock_peformance_score(Change, 3.5) :-
+        Change >= 1.61,
+        Change < 2.0,
+        !.
+    stock_peformance_score(Change, 4.0) :-
+        Change >= 2.0,
+        Change < 2.0113,
+        !.
+    stock_peformance_score(Change, 4.5) :-
+        Change >= 2.0113,
+        Change < 2.25,
+        !.
+    stock_peformance_score(Change, 5.0) :-
+        Change >= 2.25,
+        !.
+    stock_peformance_score(_, 1.0).
+
     profit_margin_score(Score) :-
         ::profit_margin(Margin),
         Margin \== 'None',
@@ -311,7 +360,7 @@
     profit_margin_score(3.0) :-
         ::profit_margin('None'),
         !.
-    profit_margin(1.0).
+    profit_margin_score(1.0).
 
     profit_margin_score(Margin, AverageMargin, 3.0) :-
         Lower is 0.95 * AverageMargin,
