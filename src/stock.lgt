@@ -325,27 +325,27 @@
     stock_performance_score(1.0).
 
     stock_performance_score(Change, 2.0) :-
-        Change >= 1.25,
-        Change < 1.50,
+        Change >= 0.25,
+        Change < 0.50,
         !.
     stock_performance_score(Change, 3.0) :-
-        Change >= 1.50,
-        Change < 1.61,
+        Change >= 0.50,
+        Change < 0.61,
         !.
     stock_performance_score(Change, 3.5) :-
-        Change >= 1.61,
-        Change < 2.0,
+        Change >= 0.61,
+        Change < 1.0,
         !.
     stock_performance_score(Change, 4.0) :-
-        Change >= 2.0,
-        Change < 2.0113,
+        Change >= 1.0,
+        Change < 1.0113,
         !.
     stock_performance_score(Change, 4.5) :-
-        Change >= 2.0113,
-        Change < 2.25,
+        Change >= 1.0113,
+        Change < 1.25,
         !.
     stock_performance_score(Change, 5.0) :-
-        Change >= 2.25,
+        Change >= 1.25,
         !.
     stock_performance_score(_, 1.0).
 
