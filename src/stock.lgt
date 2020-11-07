@@ -355,8 +355,10 @@
         Margin > 0.0,
         !,
         peer_profit_margins(Margins),
-        population::arithmetic_mean(Margins, AverageMargin),
-        profit_margin_score(Margin, AverageMargin, Score).
+        (   population::arithmetic_mean(Margins, AverageMargin)
+        ->  profit_margin_score(Margin, AverageMargin, Score)
+        ;   Score = 3.0
+        ).
     profit_margin_score(3.0) :-
         ::profit_margin('None'),
         !.
@@ -465,7 +467,9 @@
     pb_score(Score) :-
         ::pb_ratio(Ratio),
         Ratio \== 'None',
+        !,
         pb_score(Ratio, Score).
+    pb_score(3.0).
 
     pb_score(3.0, 2.0) :-
         !.
