@@ -5,8 +5,10 @@ An automated stock screener, to score candidates for the highest value stocks in
 
 Usage:
 ```
+# run in normal mode
 ./run.sh
 
+# run in debug mode
 ./run.sh debug
 ```
 
