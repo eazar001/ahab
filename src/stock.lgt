@@ -34,6 +34,11 @@
             error(existence_error(key, _, _), _),
             Year5Change = 'None'
         ),
+        catch(
+            retrieve(sharesOutstanding, Stats, SharesOutstanding),
+            error(existence_error(key, _, _), _),
+            SharesOutstanding = 'None'
+        ),
         Clauses = [
             name(Stats.companyName),
             peers(Peers),
@@ -46,7 +51,7 @@
             year5_change(Year5Change),
             revenue(Stats.revenue),
             market_cap(Stats.marketcap),
-            shares_outstanding(Stats.sharesOutstanding),
+            shares_outstanding(SharesOutstanding),
             total_cash(Stats.totalCash),
             exchange(Company.exchange),
             industry(Company.industry),
