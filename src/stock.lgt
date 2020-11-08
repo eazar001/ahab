@@ -156,6 +156,12 @@
         comment is 'Retrieves the profit margin as a proportion.'
     ]).
 
+	:- public(net_income/1).
+    :- mode(net_income(-float), one).
+    :- info(net_income/1, [
+        comment is 'The net profit after deducting the cost of goods and services.'
+    ]).
+
     :- public(revenue/1).
     :- mode(revenue(-float), one).
     :- info(revenue/1, [
@@ -532,7 +538,6 @@
         ::profit_margin(ProfitMargin),
         ::revenue(Revenue),
         ProfitMargin \== 'None',
-        ProfitMargin > 0.0,
         Net is ProfitMargin * Revenue.
 
     kth_order_stat(Sample, N, X) :-
