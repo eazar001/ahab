@@ -585,7 +585,7 @@
         ::pb_ratio(Ratio),
         ::shares_outstanding(Shares),
         previous_day_close(Price),
-        BVS is (Ratio / Price)^(-1),
+        BVS is Price / Ratio,
         Book is BVS * Shares.
 
     kth_order_stat(Sample, N, X) :-
