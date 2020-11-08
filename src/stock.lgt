@@ -156,7 +156,7 @@
         comment is 'Retrieves the profit margin as a proportion.'
     ]).
 
-	:- public(net_income/1).
+    :- public(net_income/1).
     :- mode(net_income(-float), one).
     :- info(net_income/1, [
         comment is 'The net profit after deducting the cost of goods and services.'
