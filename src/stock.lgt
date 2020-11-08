@@ -45,6 +45,8 @@
             profit_margin(Stats.profitMargin),
             year5_change(Year5Change),
             revenue(Stats.revenue),
+            market_cap(Stats.marketcap),
+            shares_outstanding(Stats.sharesOutstanding),
             total_cash(Stats.totalCash),
             exchange(Company.exchange),
             industry(Company.industry),
@@ -156,6 +158,12 @@
         comment is 'Retrieves the profit margin as a proportion.'
     ]).
 
+    :- public(roe/1).
+    :- mode(roe(-float), one).
+    :- info(roe/1, [
+        comment is 'Return on equity - calcualted as net income as a proportion of shareholder''s equity (book value).'
+    ]).
+
     :- public(net_income/1).
     :- mode(net_income(-float), one).
     :- info(net_income/1, [
@@ -166,6 +174,24 @@
     :- mode(revenue(-float), one).
     :- info(revenue/1, [
         comment is 'Business income generated from normal business activities such as the sale of goods and services.'
+    ]).
+
+    :- public(market_cap/1).
+    :- mode(market_cap(-integer), one).
+    :- info(market_cap/1, [
+        comment is 'Total market capitalization (shares outstanding * previous day close price).'
+    ]).
+
+    :- public(shares_outstanding/1).
+    :- mode(shares_outstanding(-integer), one).
+    :- info(shares_outstanding/1, [
+        comment is 'Total number of shares outstanding for the given stock in question.'
+    ]).
+
+    :- public(previous_day_close/1).
+    :- mode(previous_day_close(-float), one).
+    :- info(previous_day_close/1, [
+        comment is 'Previous day close price.'
     ]).
 
     :- public(total_cash/1).
@@ -533,12 +559,29 @@
     total_cash_score(Cash, Score) :-
         Score is 1E-10 * Cash.
 
+    roe(Return) :-
+        net_income(Net),
+        book_value(Book),
+        Return is Net / Book.
+
     % net income, net earnings
     net_income(Net) :-
         ::profit_margin(ProfitMargin),
         ::revenue(Revenue),
         ProfitMargin \== 'None',
         Net is ProfitMargin * Revenue.
+
+    previous_day_close(Price) :-
+        ::market_cap(MarketCap),
+        ::shares_outstanding(Shares),
+        Price is MarketCap / Shares.
+
+    book_value(Book) :-
+        ::pb_ratio(Ratio),
+        ::shares_outstanding(Shares),
+        previous_day_close(Price),
+        BVS is (Ratio / Price)^(-1),
+        Book is BVS * Shares.
 
     kth_order_stat(Sample, N, X) :-
         list::msort(Sample, Sample0),
