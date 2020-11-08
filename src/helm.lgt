@@ -2,9 +2,9 @@
     imports(metric_sort)).
 
     :- info([
-        version is 0:2:0,
+        version is 0:5:0,
         author is 'Ebrahim Azarisooreh',
-        date is 2020-09-19,
+        date is 2020-11-07,
         comment is 'Top level object for processing and displaying scores to user.'
     ]).
 
