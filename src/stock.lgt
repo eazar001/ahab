@@ -166,7 +166,7 @@
     :- public(roe/1).
     :- mode(roe(-float), one).
     :- info(roe/1, [
-        comment is 'Return on equity - calcualted as net income as a proportion of shareholder''s equity (book value).'
+        comment is 'Return on equity - calculated as net income as a proportion of shareholder''s equity (book value).'
     ]).
 
     :- public(net_income/1).
@@ -210,16 +210,33 @@
     :- info(score/1, [
         comment is 'The total composite score of the stock, indicating how valuable the company is as an investment decision',
         arguments is [
-            'Score' - 'A continuous score from 1.0 to 5.0, where 1.0 is an excellent investment decision, and 5.0 is a dangerous one.'
+            'Score' - 'A continuous score from 1.0 to 5.0, where 1.0 is an intriguing investment decision, and 5.0 is a questionable one.'
+        ]
+    ]).
+
+    :- public(scores/3).
+    :- mode(scores(-float, -float, -float), one).
+    :- info(scores/3, [
+        comment is 'Returns the value of the overall, value, and growth score for the stock in question.',
+        arguments is [
+            'Score' - 'A continuous score from 1.0 to 5.0, where 1.0 is an intriguing investment decision, and 5.0 is a questionable one.',
+            'ValueScore' - 'A continous score from 1.0 to 5.0, where 1.0 has a high chance of being a discounted stock relative to fair value, and 5.0 is most likely trading at a premium.',
+            'GrowthScore' - 'A continous score from 1.0 to 5.0, where 1.0 has a high chance of rapid growth, and 5.0 is most likely to have stagnant growth.'
         ]
     ]).
 
     score(Score) :-
+        scores(Score, _, _).
+
+    scores(Score, ValueScore, GrowthScore) :-
         pe_score(PEscore0),
         bound_score(PEscore0, PEscore),
         value_score(PEscore, ValueScore0),
         growth_score(GrowthScore0),
-        meta::map(translate_score, [ValueScore0, GrowthScore0], [ValueScore, GrowthScore]),
+        meta::map(translate_score, [ValueScore0, GrowthScore0], [ValueScore1, GrowthScore1]),
+        format(atom(ValueScoreAtom), '~1f', [ValueScore1]),
+        format(atom(GrowthScoreAtom), '~1f', [GrowthScore1]),
+        meta::map(atom_number, [ValueScoreAtom, GrowthScoreAtom], [ValueScore, GrowthScore]),
         population::arithmetic_mean([ValueScore, GrowthScore], Score0),
         format(atom(ScoreAtom), '~1f', [Score0]),
         atom_number(ScoreAtom, Score).
@@ -442,15 +459,15 @@
         !,
         meta::map(arg(2), Ratios1, Ratios2),
         meta::exclude(>(0.0), Ratios2, Ratios),
-        list::length(Ratios, Total),
-        pe_score_by_peer(Ratios, Total, PeerScore),
+        list::length(Ratios2, Total),
+        pe_score_by_peer(Ratios2, Total, PeerScore),
         population::harmonic_mean(Ratios, Mean),
         pe_bonus_by_average(PE, Mean, AverageBonus),
         Score is AverageBonus + PeerScore.
     pe_score(1.0).
 
     pe_score_by_peer(PEs, Total, Score) :-
-        pe_score_by_peer(PEs, 0, Total, Score).
+        pe_score_by_peer(PEs, 1.0, Total, Score).
 
     pe_score_by_peer([], Count, Total, Score) :-
         Unit is 4.0 / Total,
@@ -459,7 +476,7 @@
         ::pe_ratio(PE),
         OtherPE >= 0.0,
         OtherPE > PE,
-        PE / OtherPE >= 0.15,
+        PE / OtherPE >= 0.85,
         !,
         Count is Count0 + 1,
         pe_score_by_peer(PEs, Count, Total, Score).
