@@ -567,7 +567,10 @@
     roe(Return) :-
         net_income(Net),
         book_value(Book),
+        Book \== 'None',
+        !,
         Return is Net / Book.
+    roe('None').
 
     % net income, net earnings
     net_income(Net) :-
@@ -579,14 +582,21 @@
     previous_day_close(Price) :-
         ::market_cap(MarketCap),
         ::shares_outstanding(Shares),
+        Shares \== 'None',
+        !,
         Price is MarketCap / Shares.
+    previous_day_close('None').
 
     book_value(Book) :-
         ::pb_ratio(Ratio),
         ::shares_outstanding(Shares),
+        Shares \== 'None',
         previous_day_close(Price),
+        Price \== 'None',
+        !,
         BVS is Price / Ratio,
         Book is BVS * Shares.
+    book_value('None').
 
     kth_order_stat(Sample, N, X) :-
         list::msort(Sample, Sample0),
