@@ -24,21 +24,8 @@
     ]).
 
     new(Ticker, stock(Ticker, Company, Peers, Stats)) :-
-        catch(
-            retrieve(dividendYield, Stats, DivYield),
-            error(existence_error(key, _, _), _),
-            DivYield = 'None'
-        ),
-        catch(
-            retrieve(year5ChangePercent, Stats, Year5Change),
-            error(existence_error(key, _, _), _),
-            Year5Change = 'None'
-        ),
-        catch(
-            retrieve(sharesOutstanding, Stats, SharesOutstanding),
-            error(existence_error(key, _, _), _),
-            SharesOutstanding = 'None'
-        ),
+        Keys = [dividendYield, year5ChangePercent, sharesOutstanding],
+        meta::map(retrieve(Stats), Keys, [DivYield, Year5Change, SharesOutstanding]),
         Clauses = [
             name(Stats.companyName),
             peers(Peers),
@@ -61,7 +48,14 @@
         ],
         create_object(Ticker, [extends(stock)], [], Clauses).
 
-    retrieve(Key, Dict, Dict.Key).
+    retrieve(Dict, Key, Value) :-
+        catch(
+            retrieve_(Key, Dict, Value),
+            error(existence_error(key, _, _), _),
+            Value = 'None'
+        ).
+
+    retrieve_(Key, Dict, Dict.Key).
 
     delete(Id) :-
         extends_object(Id, stock),
