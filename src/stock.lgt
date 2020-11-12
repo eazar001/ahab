@@ -301,24 +301,22 @@
         NewPBscore is 2 * PBscore.
 
     earnings_focused_value_score(Score) :-
-        pe_score(PE0),
-        peg_score(PEG0),
-        pb_score(PB0),
-        debt_to_equity_score(DE0),
-        meta::map(bound_score, [PE0, PEG0, PB0, DE0], [PE, PEG, PB1, DE]),
-        value_score_book_modifier(PB1, PB),
+        core_value_metrics(PE, PEG, PB, DE),
         Score0 is (1.25 * PE + PEG + PB + DE) / 4,
         bound_score(Score0, Score).
 
     growth_focused_value_score(Score) :-
+        core_value_metrics(PE, PEG, PB, DE),
+        Score0 is (PE + 1.25 * PEG + PB + DE) / 4,
+        bound_score(Score0, Score).
+
+    core_value_metrics(PE, PEG, PB, DE) :-
         pe_score(PE0),
         peg_score(PEG0),
         pb_score(PB0),
         debt_to_equity_score(DE0),
         meta::map(bound_score, [PE0, PEG0, PB0, DE0], [PE, PEG, PB1, DE]),
-        value_score_book_modifier(PB1, PB),
-        Score0 is (PE + 1.25 * PEG + PB + DE) / 4,
-        bound_score(Score0, Score).
+        value_score_book_modifier(PB1, PB).
 
     sort_pe_ratios(Ratios) :-
         self(Ticker),
