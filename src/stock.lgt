@@ -316,7 +316,8 @@
         pb_score(PB0),
         debt_to_equity_score(DE0),
         meta::map(bound_score, [PE0, PEG0, PB0, DE0], [PE, PEG, PB1, DE]),
-        value_score_book_modifier(PB1, PB).
+        value_score_book_modifier(PB1, PB2),
+        bound_score(PB2, PB).
 
     sort_pe_ratios(Ratios) :-
         self(Ticker),
