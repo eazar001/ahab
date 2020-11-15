@@ -10,6 +10,9 @@
     :- multifile(logtalk::message_tokens//2).
     :- dynamic(logtalk::message_tokens//2).
 
+    :- multifile(logtalk::message_hook/4).
+    :- dynamic(logtalk::message_hook/4).
+
     logtalk::message_tokens(value_score(PEscore, growth), stock) -->
         ['PE score less than or equal to ~w, focusing weight on PEG' - [PEscore], nl].
 
@@ -18,13 +21,13 @@
 
     logtalk::message_tokens(value_score(start), stock) -->
         [nl, '--- Computing value score ---', nl, nl].
-    
+
     logtalk::message_tokens(value_score(done, Score), stock) -->
         [nl, 'Translated value score is ~w' - [Score], nl].
-    
+
     logtalk::message_tokens(growth_score(done, Score), stock) -->
         [nl, 'Translated growth score is ~w' - [Score], nl].
-    
+
     logtalk::message_tokens(overall_score(done, Score), stock) -->
         [nl, 'Translated overall score is ~w' - [Score], nl].
 

@@ -21,6 +21,7 @@
     ]).
 
     scores(Scores) :-
+        logtalk::asserta(message_hook(_, comment, stock, _)),
         findall(
             score(Stock, Score),
             (   extends_object(Stock, stock),
@@ -31,7 +32,8 @@
         list::length(Scores0, N),
         Top10Percent is floor(0.10 * N),
         list::msort(::score_sort, Scores0, Scores1),
-        list::take(Top10Percent, Scores1, Scores).
+        list::take(Top10Percent, Scores1, Scores),
+        logtalk::retractall(message_hook(_, comment, stock, _)).
 
     write_score_output :-
         scores(Scores),
@@ -44,7 +46,7 @@
                 close(Stream)
             )
         }.
-    
+
     stock_score_json_term(score(Ticker, Score), Ticker : Dict) :-
         Ticker::name(Name),
         Ticker::peers(Peers),
@@ -66,7 +68,7 @@
             sector: Sector,
             mx: Mx
         }.
-    
+
     exchange_morningstar('NASDAQ', xnas).
     exchange_morningstar('New York Stock Exchange', xnys).
     exchange_morningstar(_, xyns).
