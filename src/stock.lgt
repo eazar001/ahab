@@ -295,7 +295,7 @@
     value_score(PEscore, Score) :-
         PEscore =< 4.0,
         !,
-        logtalk::print_message(comment, stock, value_score(4.0, growth)),
+        logtalk::print_message(comment, stock, value_score(PEscore, 4.0, growth)),
         growth_focused_value_score(PEscore, Score).
     value_score(PEscore, Score) :-
         earnings_focused_value_score(PEscore, Score).

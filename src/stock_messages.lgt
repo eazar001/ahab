@@ -13,8 +13,8 @@
     :- multifile(logtalk::message_hook/4).
     :- dynamic(logtalk::message_hook/4).
 
-    logtalk::message_tokens(value_score(PEscore, growth), stock) -->
-        ['PE score less than or equal to ~w, focusing weight on PEG' - [PEscore], nl].
+    logtalk::message_tokens(value_score(PEscore, Limit, growth), stock) -->
+        ['Adjusted PE score: ~w =< ~w, focusing weight on PEG' - [PEscore, Limit], nl].
 
     logtalk::message_tokens(value_score_book_modifier, stock) -->
         ['PEG is greater than 1.0, doubling weight of P/B ratio', nl].
