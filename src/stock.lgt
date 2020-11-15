@@ -293,9 +293,10 @@
         population::arithmetic_mean([ProfitMarginScore, PerformanceScore], Score).
 
     value_score(PEscore, Score) :-
-        PEscore =< 4.0,
+        Limit = 3.0,
+        PEscore =< 3.0,
         !,
-        logtalk::print_message(comment, stock, value_score(PEscore, 4.0, growth)),
+        logtalk::print_message(comment, stock, value_score(PEscore, Limit, growth)),
         growth_focused_value_score(PEscore, Score).
     value_score(PEscore, Score) :-
         earnings_focused_value_score(PEscore, Score).
@@ -481,7 +482,7 @@
         ::pe_ratio(PE),
         OtherPE >= 0.0,
         OtherPE > PE,
-        PE / OtherPE >= 0.85,
+        PE / OtherPE =< 0.85,
         !,
         Count is Count0 + 1,
         pe_score_by_peer(PEs, Count, Total, Score).
