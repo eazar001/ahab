@@ -224,7 +224,7 @@
 
     scores(Score, ValueScore, GrowthScore) :-
         self(Self),
-        logtalk::print_message(comment, stock, computing(Self)),
+        logtalk::print_message(comment, stock, computing(start, Self)),
         pe_score(PEscore0),
         bound_score(PEscore0, PEscore),
         logtalk::print_message(comment, stock, value_score(start)),
@@ -235,9 +235,13 @@
         format(atom(ValueScoreAtom), '~1f', [ValueScore1]),
         format(atom(GrowthScoreAtom), '~1f', [GrowthScore1]),
         meta::map(atom_number, [ValueScoreAtom, GrowthScoreAtom], [ValueScore, GrowthScore]),
+        logtalk::print_message(comment, stock, value_score(done, ValueScore)),
+        logtalk::print_message(comment, stock, growth_score(done, GrowthScore)),
         population::arithmetic_mean([ValueScore, GrowthScore], Score0),
         format(atom(ScoreAtom), '~1f', [Score0]),
-        atom_number(ScoreAtom, Score).
+        atom_number(ScoreAtom, Score),
+        logtalk::print_message(comment, stock, overall_score(done, Score)),
+        logtalk::print_message(comment, stock, computing(stop, Self)).
 
     bound_score(Score0, 5.0) :-
         Score0 > 5.0,

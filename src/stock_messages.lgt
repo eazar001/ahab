@@ -18,13 +18,22 @@
 
     logtalk::message_tokens(value_score(start), stock) -->
         [nl, '--- Computing value score ---', nl, nl].
+    
+    logtalk::message_tokens(value_score(done, Score), stock) -->
+        [nl, 'Translated value score is ~w' - [Score], nl].
+    
+    logtalk::message_tokens(growth_score(done, Score), stock) -->
+        [nl, 'Translated growth score is ~w' - [Score], nl].
+    
+    logtalk::message_tokens(overall_score(done, Score), stock) -->
+        [nl, 'Translated overall score is ~w' - [Score], nl].
 
     logtalk::message_tokens(growth_score(start), stock) -->
         [nl, '--- Computing growth score ---', nl, nl].
 
     logtalk::message_tokens(stock_performance_score(Change, Score), stock) -->
         { Percent is Change * 100 },
-        ['5 year stock performance is ~w%, adjusting stock peformance score to ~w' - [Percent, Score]].
+        ['5 year stock performance is ~w%, adjusting stock peformance score to ~w' - [Percent, Score], nl].
 
     logtalk::message_tokens(profit_margin_score(Margin, AverageMargin, Score), stock) -->
         ['Margin is ~w, peer average margin is ~w, adjusting profit margin score to ~w' - [Margin, AverageMargin, Score], nl].
@@ -41,7 +50,11 @@
     logtalk::message_tokens(debt_to_equity_score(Ratio, Score), stock) -->
         ['Debt-to-equity ratio is ~w, adjusting debt-to-equity score to ~w' - [Ratio, Score], nl].
 
-    logtalk::message_tokens(computing(Stock), stock) -->
-        [nl, '--- Computing score for ~w ---' - [Stock], nl, nl].
+    logtalk::message_tokens(computing(start, Stock), stock) -->
+        [nl, nl, '******************************', nl, nl],
+        ['Computing score for ~w' - [Stock], nl, nl].
+
+    logtalk::message_tokens(computing(stop, _), stock) -->
+        [nl, nl, '******************************', nl, nl].
 
 :- end_category.
