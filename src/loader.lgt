@@ -9,6 +9,7 @@
         reader(loader),
         meta(loader),
         statistics(loader),
+        stock_messages,
         metric_sort,
         stock,
         helm,

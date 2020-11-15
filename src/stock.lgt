@@ -223,9 +223,13 @@
         scores(Score, _, _).
 
     scores(Score, ValueScore, GrowthScore) :-
+        self(Self),
+        logtalk::print_message(comment, stock, computing(Self)),
         pe_score(PEscore0),
         bound_score(PEscore0, PEscore),
+        logtalk::print_message(comment, stock, value_score(start)),
         value_score(PEscore, ValueScore0),
+        logtalk::print_message(comment, stock, growth_score(start)),
         growth_score(GrowthScore0),
         meta::map(translate_score, [ValueScore0, GrowthScore0], [ValueScore1, GrowthScore1]),
         format(atom(ValueScoreAtom), '~1f', [ValueScore1]),
@@ -287,9 +291,10 @@
     value_score(PEscore, Score) :-
         PEscore =< 4.0,
         !,
-        growth_focused_value_score(Score).
-    value_score(_, Score) :-
-        earnings_focused_value_score(Score).
+        logtalk::print_message(comment, stock, value_score(4.0, growth)),
+        growth_focused_value_score(PEscore, Score).
+    value_score(PEscore, Score) :-
+        earnings_focused_value_score(PEscore, Score).
 
     value_score_book_modifier(PBscore, PBscore) :-
         ::peg_ratio(PEG),
@@ -298,24 +303,24 @@
         PEG =< 1.0,
         !.
     value_score_book_modifier(PBscore, NewPBscore) :-
+        logtalk::print_message(comment, stock, value_score_book_modifier),
         NewPBscore is 2 * PBscore.
 
-    earnings_focused_value_score(Score) :-
-        core_value_metrics(PE, PEG, PB, DE),
+    earnings_focused_value_score(PE, Score) :-
+        core_value_metrics(PEG, PB, DE),
         Score0 is (1.25 * PE + PEG + PB + DE) / 4,
         bound_score(Score0, Score).
 
-    growth_focused_value_score(Score) :-
-        core_value_metrics(PE, PEG, PB, DE),
+    growth_focused_value_score(PE, Score) :-
+        core_value_metrics(PEG, PB, DE),
         Score0 is (PE + 1.25 * PEG + PB + DE) / 4,
         bound_score(Score0, Score).
 
-    core_value_metrics(PE, PEG, PB, DE) :-
-        pe_score(PE0),
+    core_value_metrics(PEG, PB, DE) :-
         peg_score(PEG0),
         pb_score(PB0),
         debt_to_equity_score(DE0),
-        meta::map(bound_score, [PE0, PEG0, PB0, DE0], [PE, PEG, PB1, DE]),
+        meta::map(bound_score, [PEG0, PB0, DE0], [PEG, PB1, DE]),
         value_score_book_modifier(PB1, PB2),
         bound_score(PB2, PB).
 
@@ -365,7 +370,8 @@
         Change \== 'None',
         Change > 0.0,
         !,
-        stock_performance_score(Change, Score).
+        stock_performance_score(Change, Score),
+        logtalk::print_message(comment, stock, stock_performance_score(Change, Score)).
     stock_performance_score(3.0) :-
         ::year5_change('None'),
         !.
@@ -403,7 +409,8 @@
         !,
         peer_profit_margins(Margins),
         (   population::arithmetic_mean(Margins, AverageMargin)
-        ->  profit_margin_score(Margin, AverageMargin, Score)
+        ->  profit_margin_score(Margin, AverageMargin, Score),
+            logtalk::print_message(comment, stock, profit_margin_score(Margin, AverageMargin, Score))
         ;   Score = 3.0
         ).
     profit_margin_score(3.0) :-
@@ -454,6 +461,7 @@
         meta::exclude(>(0.0), Ratios2, Ratios),
         list::length(Ratios2, Total),
         pe_score_by_peer(Ratios2, Total, PeerScore),
+        logtalk::print_message(comment, stock, pe_score_by_peer(PE, Ratios2, PeerScore)),
         population::harmonic_mean(Ratios, Mean),
         pe_bonus_by_average(PE, Mean, AverageBonus),
         Score is AverageBonus + PeerScore.
@@ -502,7 +510,8 @@
         Ratio \== 'None',
         Ratio >= 0.0,
         !,
-        peg_score(Ratio, Score).
+        peg_score(Ratio, Score),
+        logtalk::print_message(comment, stock, peg_score(Ratio, Score)).
     peg_score(1.0).
 
     peg_score(Ratio, 3.0) :-
@@ -515,7 +524,8 @@
         ::pb_ratio(Ratio),
         Ratio \== 'None',
         !,
-        pb_score(Ratio, Score).
+        pb_score(Ratio, Score),
+        logtalk::print_message(comment, stock, pb_score(Ratio, Score)).
     pb_score(3.0).
 
     pb_score(3.0, 2.0) :-
@@ -538,7 +548,8 @@
         Ratio \== 'None',
         Ratio >= 0.0,
         !,
-        debt_to_equity_score(Ratio, Score).
+        debt_to_equity_score(Ratio, Score),
+        logtalk::print_message(comment, stock, debt_to_equity_score(Ratio, Score)).
     debt_to_equity_score(3.0) :-
         ::debt_to_equity_ratio('None'),
         !.
