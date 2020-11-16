@@ -30,12 +30,12 @@
     ]).
 
     new(Ticker, stock(Ticker, Company, Peers, Stats)) :-
-        Keys = [dividendYield, year5ChangePercent, sharesOutstanding, profitMargin],
-        meta::map(retrieve(Stats), Keys, [DivYield, Year5Change, SharesOutstanding, ProfitMargin]),
+        Keys = [dividendYield, year5ChangePercent, sharesOutstanding, profitMargin, peRatio],
+        meta::map(retrieve(Stats), Keys, [DivYield, Year5Change, SharesOutstanding, ProfitMargin, PEratio]),
         Clauses = [
             name(Stats.companyName),
             peers(Peers),
-            pe_ratio(Stats.peRatio),
+            pe_ratio(PEratio),
             peg_ratio(Stats.pegRatio),
             pb_ratio(Stats.priceToBook),
             debt_to_equity_ratio(Stats.debtToEquity),
@@ -344,20 +344,20 @@
         value_score_book_modifier(PB1, PB2),
         bound_score(PB2, PB).
 
-    sort_pe_ratios(Ratios) :-
+    peer_pe_ratios(Ratios) :-
         self(Ticker),
         ::peers(Peers),
         findall(
             pe_rank(Peer, Ratio),
             (   list::member(Peer, [Ticker|Peers]),
                 extends_object(Peer, stock),
-                Peer::pe_ratio(Ratio),
-                Ratio \== 'None',
-                Ratio >= 0.0
+                Peer::pe_ratio(OptionalRatio0),
+                optional(OptionalRatio0)::filter(=<(0.0), OptionalRatio),
+                optional(OptionalRatio)::is_present,
+                optional(OptionalRatio)::get(Ratio)
             ),
-            Ratios0
-        ),
-        list::msort(::pe_sort, Ratios0, Ratios).
+            Ratios
+        ).
 
     sort_div_rankings(Yields) :-
         self(Ticker),
@@ -366,8 +366,7 @@
             div_yield(Peer, Div),
             (   list::member(Peer, [Ticker|Peers]),
                 extends_object(Peer, stock),
-                Peer::div_yield(Div),
-                Div \== 'None'
+                Peer::div_yield(Div)
             ),
             Yields0
         ),
@@ -379,8 +378,7 @@
             Margin,
             (   list::member(Peer, Peers),
                 extends_object(Peer, stock),
-                Peer::profit_margin(Margin),
-                Margin \== 'None'
+                Peer::profit_margin(Margin)
             ),
             Margins
         ).
@@ -473,7 +471,7 @@
 
     pe_score(Score) :-
         self(Self),
-        sort_pe_ratios(Ratios0),
+        peer_pe_ratios(Ratios0),
         list::selectchk(pe_rank(Self, PE), Ratios0, Ratios1),
         PE >= 0.0,
         \+ list::empty(Ratios1),
@@ -481,34 +479,33 @@
         meta::map(arg(2), Ratios1, Ratios2),
         meta::exclude(>(0.0), Ratios2, Ratios),
         list::length(Ratios2, Total),
-        pe_score_by_peer(Ratios2, Total, PeerScore),
+        pe_score_by_peer(PE, Ratios2, Total, PeerScore),
         logtalk::print_message(comment, stock, pe_score_by_peer(PE, Ratios2, PeerScore)),
         population::harmonic_mean(Ratios, Mean),
         pe_bonus_by_average(PE, Mean, AverageBonus),
         Score is AverageBonus + PeerScore.
     pe_score(1.0).
 
-    pe_score_by_peer(PEs, Total, Score) :-
-        pe_score_by_peer(PEs, 1.0, Total, Score).
+    pe_score_by_peer(PE, PEs, Total, Score) :-
+        pe_score_by_peer(PEs, PE, 1.0, Total, Score).
 
-    pe_score_by_peer([], Count, Total, Score) :-
+    pe_score_by_peer([], _, Count, Total, Score) :-
         Unit is 4.0 / Total,
         Score is Count * Unit.
-    pe_score_by_peer([OtherPE|PEs], Count0, Total, Score) :-
-        ::pe_ratio(PE),
+    pe_score_by_peer([OtherPE|PEs], PE, Count0, Total, Score) :-
         OtherPE >= 0.0,
         OtherPE > PE,
         PE / OtherPE =< 0.85,
         !,
         Count is Count0 + 1,
-        pe_score_by_peer(PEs, Count, Total, Score).
-    pe_score_by_peer([OtherPE|PEs], Count0, Total, Score) :-
+        pe_score_by_peer(PEs, PE, Count, Total, Score).
+    pe_score_by_peer([OtherPE|PEs], PE, Count0, Total, Score) :-
         OtherPE < 0.0,
         !,
         Count is Count0 + 1,
-        pe_score_by_peer(PEs, Count, Total, Score).
-    pe_score_by_peer([_|PEs], Count, Total, Score) :-
-        pe_score_by_peer(PEs, Count, Total, Score).
+        pe_score_by_peer(PEs, PE, Count, Total, Score).
+    pe_score_by_peer([_|PEs], PE, Count, Total, Score) :-
+        pe_score_by_peer(PEs, PE, Count, Total, Score).
 
     pe_bonus_by_average(Ratio, Ratio, 0.0) :-
         !.
