@@ -353,8 +353,7 @@
                 extends_object(Peer, stock),
                 Peer::pe_ratio(OptionalRatio0),
                 optional(OptionalRatio0)::filter(=<(0.0), OptionalRatio),
-                optional(OptionalRatio)::is_present,
-                optional(OptionalRatio)::get(Ratio)
+                optional(OptionalRatio)::or_else_fail(Ratio)
             ),
             Ratios
         ).
