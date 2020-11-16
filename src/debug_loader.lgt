@@ -11,6 +11,7 @@
         reader(loader),
         meta(loader),
         statistics(loader),
+        optionals(loader),
         stock_messages,
         metric_sort,
         stock,
