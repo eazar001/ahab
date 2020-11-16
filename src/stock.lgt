@@ -69,9 +69,7 @@
         ).
     
     delete_all :-
-        delete(_),
-        fail.
-    delete_all.
+        forall(extends_object(Id, stock), abolish_object(Id)).
 
     delete(Id) :-
         extends_object(Id, stock),
