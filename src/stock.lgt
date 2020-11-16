@@ -30,14 +30,14 @@
     ]).
 
     new(Ticker, stock(Ticker, Company, Peers, Stats)) :-
-        Keys = [dividendYield, year5ChangePercent, sharesOutstanding, profitMargin, peRatio, pegRatio],
-        meta::map(retrieve(Stats), Keys, [DivYield, Year5Change, SharesOutstanding, ProfitMargin, PEratio, PEGratio]),
+        Keys = [dividendYield, year5ChangePercent, sharesOutstanding, profitMargin, peRatio, pegRatio, priceToBook],
+        meta::map(retrieve(Stats), Keys, [DivYield, Year5Change, SharesOutstanding, ProfitMargin, PEratio, PEGratio, PBratio]),
         Clauses = [
             name(Stats.companyName),
             peers(Peers),
             pe_ratio(PEratio),
             peg_ratio(PEGratio),
-            pb_ratio(Stats.priceToBook),
+            pb_ratio(PBratio),
             debt_to_equity_ratio(Stats.debtToEquity),
             div_yield(DivYield),
             profit_margin(ProfitMargin),
@@ -543,8 +543,8 @@
         Score is (4 - Ratio) + 1.0.
 
     pb_score(Score) :-
-        ::pb_ratio(Ratio),
-        Ratio \== 'None',
+        ::pb_ratio(OptionalRatio),
+        optional(OptionalRatio)::or_else_fail(Ratio),
         !,
         pb_score(Ratio, Score),
         logtalk::print_message(comment, stock, pb_score(Ratio, Score)).
