@@ -17,6 +17,12 @@
         ]
     ]).
 
+    :- public(delete_all/0).
+    :- mode(delete_all, one).
+    :- info(delete_all/0, [
+        comment is 'Deletes all objects that currently extend the stock object.'
+    ]).
+
     :- public(delete/1).
     :- mode(delete(+object_identifier), one).
     :- info(delete/1, [
@@ -24,8 +30,8 @@
     ]).
 
     new(Ticker, stock(Ticker, Company, Peers, Stats)) :-
-        Keys = [dividendYield, year5ChangePercent, sharesOutstanding],
-        meta::map(retrieve(Stats), Keys, [DivYield, Year5Change, SharesOutstanding]),
+        Keys = [dividendYield, year5ChangePercent, sharesOutstanding, profitMargin],
+        meta::map(retrieve(Stats), Keys, [DivYield, Year5Change, SharesOutstanding, ProfitMargin]),
         Clauses = [
             name(Stats.companyName),
             peers(Peers),
@@ -34,7 +40,7 @@
             pb_ratio(Stats.priceToBook),
             debt_to_equity_ratio(Stats.debtToEquity),
             div_yield(DivYield),
-            profit_margin(Stats.profitMargin),
+            profit_margin(ProfitMargin),
             year5_change(Year5Change),
             revenue(Stats.revenue),
             market_cap(Stats.marketcap),
@@ -56,7 +62,16 @@
         ).
 
     retrieve_(Key, Dict, Value) :-
-        optional::of(Dict.Key, Value).
+        Value0 = Dict.Key,
+        (   Value0 == 'None'
+        ->  optional::empty(Value)
+        ;   optional::of(Value0, Value)
+        ).
+    
+    delete_all :-
+        delete(_),
+        fail.
+    delete_all.
 
     delete(Id) :-
         extends_object(Id, stock),
@@ -153,7 +168,7 @@
     ]).
 
     :- public(profit_margin/1).
-    :- mode(profit_margin(-float), one).
+    :- mode(profit_margin(-optional(float)), one).
     :- info(profit_margin/1, [
         comment is 'Retrieves the profit margin as a proportion.'
     ]).
@@ -165,7 +180,7 @@
     ]).
 
     :- public(net_income/1).
-    :- mode(net_income(-float), one).
+    :- mode(net_income(-optional(float)), one).
     :- info(net_income/1, [
         comment is 'The net profit after deducting the cost of goods and services.'
     ]).
@@ -373,8 +388,8 @@
         ).
 
     stock_performance_score(Score) :-
-        ::year5_change(Change),
-        optional(Change)::map(stock_performance_score, OptionalScore),
+        ::year5_change(OptionalChange),
+        optional(OptionalChange)::map(stock_performance_score, OptionalScore),
         optional(OptionalScore)::or_else(Score, 3.0).
 
     stock_performance_score(Change, Score) :-
@@ -410,52 +425,53 @@
     stock_performance_score_(_, 1.0).
 
     profit_margin_score(Score) :-
-        ::profit_margin(Margin),
-        Margin \== 'None',
+        ::profit_margin(OptionalMargin),
+        optional(OptionalMargin)::map(profit_margin_score, OptionalScore),
+        optional(OptionalScore)::or_else(Score, 3.0).
+
+    profit_margin_score(Margin, Score) :-
         Margin > 0.0,
         !,
-        peer_profit_margins(Margins),
+        peer_profit_margins(OptionalMargins),
+        maybe::cat(OptionalMargins, Margins),
         (   population::arithmetic_mean(Margins, AverageMargin)
-        ->  profit_margin_score(Margin, AverageMargin, Score),
+        ->  profit_margin_score_(Margin, AverageMargin, Score),
             logtalk::print_message(comment, stock, profit_margin_score(Margin, AverageMargin, Score))
         ;   Score = 3.0
         ).
-    profit_margin_score(3.0) :-
-        ::profit_margin('None'),
-        !.
-    profit_margin_score(1.0).
+    profit_margin_score(_, 1.0).
 
-    profit_margin_score(Margin, AverageMargin, 3.0) :-
+    profit_margin_score_(Margin, AverageMargin, 3.0) :-
         Lower is 0.95 * AverageMargin,
         Upper is 1.05 * AverageMargin,
         Margin >= Lower,
         Margin =< Upper,
         !.
-    profit_margin_score(Margin, AverageMargin, 3.5) :-
+    profit_margin_score_(Margin, AverageMargin, 3.5) :-
         Upper is 1.05 * AverageMargin,
         Margin >= AverageMargin,
         Margin =< Upper,
         !.
-    profit_margin_score(Margin, AverageMargin, 4.0) :-
+    profit_margin_score_(Margin, AverageMargin, 4.0) :-
         Lower is 1.05 * AverageMargin,
         Upper is 1.08 * AverageMargin,
         Margin >= Lower,
         Margin =< Upper,
         !.
-    profit_margin_score(Margin, AverageMargin, 4.5) :-
+    profit_margin_score_(Margin, AverageMargin, 4.5) :-
         Lower is 1.05 * AverageMargin,
         Upper is 1.10 * AverageMargin,
         Margin >= Lower,
         Margin =< Upper,
         !.
-    profit_margin_score(Margin, AverageMargin, 5.0) :-
+    profit_margin_score_(Margin, AverageMargin, 5.0) :-
         Margin > AverageMargin,
         !.
-    profit_margin_score(Margin, AverageMargin, 2.0) :-
+    profit_margin_score_(Margin, AverageMargin, 2.0) :-
         Lower is 0.95 * AverageMargin,
         Margin < Lower,
         !.
-    profit_margin_score(_, _, 1.0).
+    profit_margin_score_(_, _, 1.0).
 
     pe_score(Score) :-
         self(Self),
