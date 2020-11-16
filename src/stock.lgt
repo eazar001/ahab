@@ -30,13 +30,13 @@
     ]).
 
     new(Ticker, stock(Ticker, Company, Peers, Stats)) :-
-        Keys = [dividendYield, year5ChangePercent, sharesOutstanding, profitMargin, peRatio],
-        meta::map(retrieve(Stats), Keys, [DivYield, Year5Change, SharesOutstanding, ProfitMargin, PEratio]),
+        Keys = [dividendYield, year5ChangePercent, sharesOutstanding, profitMargin, peRatio, pegRatio],
+        meta::map(retrieve(Stats), Keys, [DivYield, Year5Change, SharesOutstanding, ProfitMargin, PEratio, PEGratio]),
         Clauses = [
             name(Stats.companyName),
             peers(Peers),
             pe_ratio(PEratio),
-            peg_ratio(Stats.pegRatio),
+            peg_ratio(PEGratio),
             pb_ratio(Stats.priceToBook),
             debt_to_equity_ratio(Stats.debtToEquity),
             div_yield(DivYield),
@@ -130,7 +130,7 @@
     ]).
 
     :- public(peg_ratio/1).
-    :- mode(peg_ratio(-float), one).
+    :- mode(peg_ratio(-optional(float)), one).
     :- info(peg_ratio/1 ,[
         comment is 'Retrieves the PEG ratio (P/E relative to growth).'
     ]).
@@ -315,14 +315,19 @@
         growth_focused_value_score(PEscore, Score).
     value_score(PEscore, Score) :-
         earnings_focused_value_score(PEscore, Score).
+    
+    value_score_book_modifier(PBscore0, PBscore) :-
+        ::peg_ratio(OptionalPEG),
+        optional(OptionalPEG)::or_else_fail(PEG),
+        !,
+        value_score_book_modifier(PEG, PBscore0, PBscore).
+    value_score_book_modifier(PBscore, PBscore).
 
-    value_score_book_modifier(PBscore, PBscore) :-
-        ::peg_ratio(PEG),
-        PEG \= 'None',
+    value_score_book_modifier(PEG, PBscore, PBscore) :-
         PEG >= 0.0,
         PEG =< 1.0,
         !.
-    value_score_book_modifier(PBscore, NewPBscore) :-
+    value_score_book_modifier(_, PBscore, NewPBscore) :-
         logtalk::print_message(comment, stock, value_score_book_modifier),
         NewPBscore is 2 * PBscore.
 
@@ -523,8 +528,8 @@
         Score is (Div1 - Div2) / Div2.
 
     peg_score(Score) :-
-        ::peg_ratio(Ratio),
-        Ratio \== 'None',
+        ::peg_ratio(OptionalRatio),
+        optional(OptionalRatio)::or_else_fail(Ratio),
         Ratio >= 0.0,
         !,
         peg_score(Ratio, Score),
