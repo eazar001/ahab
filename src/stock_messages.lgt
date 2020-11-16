@@ -13,10 +13,6 @@
     :- multifile(logtalk::message_hook/4).
     :- dynamic(logtalk::message_hook/4).
 
-    logtalk::message_hook(calculate_scores(_), comment, stock, Tokens) :-
-        logtalk::message_prefix_stream(comment, stock, Prefix, Stream),
-        logtalk::print_message_tokens(Stream, Prefix, Tokens).
-
     logtalk::message_tokens(extract_and_load(Time), stock) -->
         [nl, nl, 'Extraction and loading of all stocks into knowledge-base: ~ws' - [Time], nl].
     
