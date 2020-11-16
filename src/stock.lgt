@@ -52,10 +52,11 @@
         catch(
             retrieve_(Key, Dict, Value),
             error(existence_error(key, _, _), _),
-            Value = 'None'
+            optional::empty(Value)
         ).
 
-    retrieve_(Key, Dict, Dict.Key).
+    retrieve_(Key, Dict, Value) :-
+        optional::of(Dict.Key, Value).
 
     delete(Id) :-
         extends_object(Id, stock),
@@ -134,7 +135,7 @@
     ]).
 
     :- public(year5_change/1).
-    :- mode(year5_change(-float), one).
+    :- mode(year5_change(-optional(float)), one).
     :- info(year5_change/1, [
         comment is 'A proportion representing the percent change in stock price over 5 years.'
     ]).
@@ -373,40 +374,40 @@
 
     stock_performance_score(Score) :-
         ::year5_change(Change),
-        Change \== 'None',
+        optional(Change)::map(stock_performance_score, OptionalScore),
+        optional(OptionalScore)::or_else(Score, 3.0).
+
+    stock_performance_score(Change, Score) :-
         Change > 0.0,
         !,
-        stock_performance_score(Change, Score),
+        stock_performance_score_(Change, Score),
         logtalk::print_message(comment, stock, stock_performance_score(Change, Score)).
-    stock_performance_score(3.0) :-
-        ::year5_change('None'),
-        !.
-    stock_performance_score(1.0).
+    stock_performance_score(_, 1.0).
 
-    stock_performance_score(Change, 2.0) :-
+    stock_performance_score_(Change, 2.0) :-
         Change >= 0.25,
         Change < 0.50,
         !.
-    stock_performance_score(Change, 3.0) :-
+    stock_performance_score_(Change, 3.0) :-
         Change >= 0.50,
         Change < 0.61,
         !.
-    stock_performance_score(Change, 3.5) :-
+    stock_performance_score_(Change, 3.5) :-
         Change >= 0.61,
         Change < 1.0,
         !.
-    stock_performance_score(Change, 4.0) :-
+    stock_performance_score_(Change, 4.0) :-
         Change >= 1.0,
         Change < 1.0113,
         !.
-    stock_performance_score(Change, 4.5) :-
+    stock_performance_score_(Change, 4.5) :-
         Change >= 1.0113,
         Change < 1.25,
         !.
-    stock_performance_score(Change, 5.0) :-
+    stock_performance_score_(Change, 5.0) :-
         Change >= 1.25,
         !.
-    stock_performance_score(_, 1.0).
+    stock_performance_score_(_, 1.0).
 
     profit_margin_score(Score) :-
         ::profit_margin(Margin),
