@@ -30,15 +30,33 @@
     ]).
 
     new(Ticker, stock(Ticker, Company, Peers, Stats)) :-
-        Keys = [dividendYield, year5ChangePercent, sharesOutstanding, profitMargin, peRatio, pegRatio, priceToBook],
-        meta::map(retrieve(Stats), Keys, [DivYield, Year5Change, SharesOutstanding, ProfitMargin, PEratio, PEGratio, PBratio]),
+        Keys = [
+            dividendYield,
+            year5ChangePercent,
+            sharesOutstanding,
+            profitMargin,
+            peRatio,
+            pegRatio,
+            priceToBook,
+            debtToEquity
+        ],
+        meta::map(retrieve(Stats), Keys, [
+            DivYield,
+            Year5Change,
+            SharesOutstanding,
+            ProfitMargin,
+            PEratio,
+            PEGratio,
+            PBratio,
+            DebtToEquity
+        ]),
         Clauses = [
             name(Stats.companyName),
             peers(Peers),
             pe_ratio(PEratio),
             peg_ratio(PEGratio),
             pb_ratio(PBratio),
-            debt_to_equity_ratio(Stats.debtToEquity),
+            debt_to_equity_ratio(DebtToEquity),
             div_yield(DivYield),
             profit_margin(ProfitMargin),
             year5_change(Year5Change),
@@ -566,46 +584,30 @@
     pb_score(_, 1.0).
 
     debt_to_equity_score(Score) :-
-        ::debt_to_equity_ratio(Ratio),
-        Ratio \== 'None',
+        ::debt_to_equity_ratio(OptionalRatio),
+        optional(OptionalRatio)::map(debt_to_equity_score, OptionalScore),
+        optional(OptionalScore)::or_else(Score, 3.0).
+
+    debt_to_equity_score(Ratio, Score) :-
         Ratio >= 0.0,
         !,
-        debt_to_equity_score(Ratio, Score),
+        debt_to_equity_score_(Ratio, Score),
         logtalk::print_message(comment, stock, debt_to_equity_score(Ratio, Score)).
-    debt_to_equity_score(3.0) :-
-        ::debt_to_equity_ratio('None'),
-        !.
-    debt_to_equity_score(1.0).
-
-    debt_to_equity_score(Ratio, 5.0) :-
-        Ratio =< 1.0,
-        !.
-    debt_to_equity_score(Ratio, 4.0) :-
-        Ratio =< 1.5,
-        !.
-    debt_to_equity_score(Ratio, 3.0) :-
-        Ratio =< 2.0,
-        !.
-    debt_to_equity_score(Ratio, 2.0) :-
-        Ratio =< 2.5,
-        !.
     debt_to_equity_score(_, 1.0).
 
-    total_cash_score(Score) :-
-        ::total_cash(Cash),
-        Cash \== 'None',
-        !,
-        total_cash_score(Cash, Score).
-    total_cash_score(0.0).
-
-    total_cash_score(0.0, -0.25) :-
+    debt_to_equity_score_(Ratio, 5.0) :-
+        Ratio =< 1.0,
         !.
-    total_cash_score(Cash, Score) :-
-        Cash > 0.0,
-        Score is 1E-10 * Cash,
+    debt_to_equity_score_(Ratio, 4.0) :-
+        Ratio =< 1.5,
         !.
-    total_cash_score(Cash, Score) :-
-        Score is 1E-10 * Cash.
+    debt_to_equity_score_(Ratio, 3.0) :-
+        Ratio =< 2.0,
+        !.
+    debt_to_equity_score_(Ratio, 2.0) :-
+        Ratio =< 2.5,
+        !.
+    debt_to_equity_score_(_, 1.0).
 
     roe(Return) :-
         net_income(Net),
