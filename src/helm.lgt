@@ -21,19 +21,21 @@
     ]).
 
     scores(Scores) :-
-        logtalk::asserta(message_hook(_, comment, stock, _)),
-        findall(
-            score(Stock, Score),
-            (   extends_object(Stock, stock),
-                Stock::score(Score)
-            ),
-            Scores0
-        ),
+        logtalk::asserta(message_hook(Message, comment, stock, _) :- Message \= calculate_scores(_)),
+        lgtunit::benchmark(helm::stock_scores(Scores0), Time),
+        logtalk::print_message(comment, stock, calculate_scores(Time)),
         list::length(Scores0, N),
         Top10Percent is floor(0.10 * N),
         list::msort(::score_sort, Scores0, Scores1),
         list::take(Top10Percent, Scores1, Scores),
         logtalk::retractall(message_hook(_, comment, stock, _)).
+    
+    stock_scores(Scores) :-
+        findall(score(Stock, Score), stock_score(Stock, Score), Scores).
+
+    stock_score(Stock, Score) :-
+        extends_object(Stock, stock),
+        Stock::score(Score).
 
     write_score_output :-
         scores(Scores),

@@ -5,6 +5,7 @@
     assertz(logtalk_library_path(data, Data)),
     use_module(library(http/json)),
     logtalk_load([
+        lgtunit(loader),
         basic_types(loader),
         reader(loader),
         meta(loader),

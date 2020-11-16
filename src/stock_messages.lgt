@@ -13,6 +13,16 @@
     :- multifile(logtalk::message_hook/4).
     :- dynamic(logtalk::message_hook/4).
 
+    logtalk::message_hook(calculate_scores(_), comment, stock, Tokens) :-
+        logtalk::message_prefix_stream(comment, stock, Prefix, Stream),
+        logtalk::print_message_tokens(Stream, Prefix, Tokens).
+
+    logtalk::message_tokens(extract_and_load(Time), stock) -->
+        [nl, nl, 'Extraction and loading of all stocks into knowledge-base: ~ws' - [Time], nl].
+    
+    logtalk::message_tokens(calculate_scores(Time), stock) -->
+        ['Calculation of all stock scores: ~ws' - [Time], nl, nl].
+
     logtalk::message_tokens(value_score(PEscore, Limit, growth), stock) -->
         ['Adjusted PE score: ~w =< ~w, focusing weight on PEG' - [PEscore, Limit], nl].
 

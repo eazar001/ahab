@@ -17,6 +17,10 @@
     ]).
 
     extract_and_load(Path) :-
+        lgtunit::benchmark(extract_and_load_(Path), Time),
+        logtalk::print_message(comment, stock, extract_and_load(Time)).
+
+    extract_and_load_(Path) :-
         logtalk::expand_library_path(Path, File),
         reader::file_to_terms(File, Terms),
         meta::map(convert_term, Terms, Stocks),

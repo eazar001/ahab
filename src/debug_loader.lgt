@@ -7,6 +7,7 @@
     use_module(library(http/json)),
     logtalk_load([
         debugger(loader),
+        lgtunit(loader),
         basic_types(loader),
         reader(loader),
         meta(loader),
