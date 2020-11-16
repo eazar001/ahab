@@ -235,6 +235,7 @@
         format(atom(ValueScoreAtom), '~1f', [ValueScore1]),
         format(atom(GrowthScoreAtom), '~1f', [GrowthScore1]),
         meta::map(atom_number, [ValueScoreAtom, GrowthScoreAtom], [ValueScore, GrowthScore]),
+        logtalk::print_message(comment, stock, score_summary_header),
         logtalk::print_message(comment, stock, value_score(done, ValueScore)),
         logtalk::print_message(comment, stock, growth_score(done, GrowthScore)),
         population::arithmetic_mean([ValueScore, GrowthScore], Score0),

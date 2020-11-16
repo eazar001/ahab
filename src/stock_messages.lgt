@@ -59,5 +59,8 @@
 
     logtalk::message_tokens(computing(stop, _), stock) -->
         [nl, nl, '******************************', nl, nl].
+    
+    logtalk::message_tokens(score_summary_header, stock) -->
+        [nl, nl, '--- Computing final scores ---', nl, nl].
 
 :- end_category.
