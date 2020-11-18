@@ -146,7 +146,7 @@
     ]).
 
     :- public(pe_ratio/1).
-    :- mode(pe_ratio(-float), one).
+    :- mode(pe_ratio(-optional(float)), one).
     :- info(pe_ratio/1, [
         comment is 'Retrieves the price to earnings per share ratio.'
     ]).
@@ -158,7 +158,7 @@
     ]).
 
     :- public(pb_ratio/1).
-    :- mode(pb_ratio(-float), one).
+    :- mode(pb_ratio(-optional(float)), one).
     :- info(pb_ratio/1, [
         comment is 'Retrieves the price to book value (assets minus liabilities) per share ratio.'
     ]).
@@ -194,7 +194,7 @@
     ]).
 
     :- public(roe/1).
-    :- mode(roe(-float), one).
+    :- mode(roe(-optional(float)), one).
     :- info(roe/1, [
         comment is 'Return on equity - calculated as net income as a proportion of shareholder''s equity (book value).'
     ]).
@@ -206,25 +206,25 @@
     ]).
 
     :- public(revenue/1).
-    :- mode(revenue(-float), one).
+    :- mode(revenue(-optional(float)), one).
     :- info(revenue/1, [
         comment is 'Business income generated from normal business activities such as the sale of goods and services.'
     ]).
 
     :- public(market_cap/1).
-    :- mode(market_cap(-integer), one).
+    :- mode(market_cap(-optional(integer)), one).
     :- info(market_cap/1, [
         comment is 'Total market capitalization (shares outstanding * previous day close price).'
     ]).
 
     :- public(shares_outstanding/1).
-    :- mode(shares_outstanding(-integer), one).
+    :- mode(shares_outstanding(-optional(integer)), one).
     :- info(shares_outstanding/1, [
         comment is 'Total number of shares outstanding for the given stock in question.'
     ]).
 
     :- public(previous_day_close/1).
-    :- mode(previous_day_close(-float), one).
+    :- mode(previous_day_close(-optional(float)), one).
     :- info(previous_day_close/1, [
         comment is 'Previous day close price.'
     ]).
