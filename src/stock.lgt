@@ -404,7 +404,8 @@
             Margin,
             (   list::member(Peer, Peers),
                 extends_object(Peer, stock),
-                Peer::profit_margin(Margin)
+                Peer::profit_margin(OptionalMargin),
+                optional(OptionalMargin)::or_else_fail(Margin)
             ),
             Margins
         ).
@@ -454,8 +455,7 @@
     profit_margin_score(Margin, Score) :-
         Margin > 0.0,
         !,
-        peer_profit_margins(OptionalMargins),
-        maybe::cat(OptionalMargins, Margins),
+        peer_profit_margins(Margins),
         (   population::arithmetic_mean(Margins, AverageMargin)
         ->  profit_margin_score_(Margin, AverageMargin, Score),
             logtalk::print_message(comment, stock, profit_margin_score(Margin, AverageMargin, Score))
