@@ -38,7 +38,9 @@
             peRatio,
             pegRatio,
             priceToBook,
-            debtToEquity
+            debtToEquity,
+            revenue,
+            marketcap
         ],
         meta::map(retrieve(Stats), Keys, [
             DivYield,
@@ -48,7 +50,9 @@
             PEratio,
             PEGratio,
             PBratio,
-            DebtToEquity
+            DebtToEquity,
+            Revenue,
+            MarketCap
         ]),
         Clauses = [
             name(Stats.companyName),
@@ -60,8 +64,8 @@
             div_yield(DivYield),
             profit_margin(ProfitMargin),
             year5_change(Year5Change),
-            revenue(Stats.revenue),
-            market_cap(Stats.marketcap),
+            revenue(Revenue),
+            market_cap(MarketCap),
             shares_outstanding(SharesOutstanding),
             total_cash(Stats.totalCash),
             exchange(Company.exchange),
@@ -85,7 +89,7 @@
         ->  optional::empty(Value)
         ;   optional::of(Value0, Value)
         ).
-    
+
     delete_all :-
         forall(extends_object(Id, stock), abolish_object(Id)).
 
@@ -333,7 +337,7 @@
         growth_focused_value_score(PEscore, Score).
     value_score(PEscore, Score) :-
         earnings_focused_value_score(PEscore, Score).
-    
+
     value_score_book_modifier(PBscore0, PBscore) :-
         ::peg_ratio(OptionalPEG),
         optional(OptionalPEG)::or_else_fail(PEG),
@@ -609,39 +613,56 @@
         !.
     debt_to_equity_score_(_, 1.0).
 
-    roe(Return) :-
-        net_income(Net),
-        book_value(Book),
-        Book \== 'None',
+    roe(OptionalReturn) :-
+        net_income(OptionalNet),
+        book_value(OptionalBook),
+        optional(OptionalNet)::or_else_fail(Net),
         !,
-        Return is Net / Book.
-    roe('None').
+        optional(OptionalBook)::map(roe(Net), OptionalReturn).
+    roe(Empty) :-
+        optional::empty(Empty).
 
-    % net income, net earnings
-    net_income(Net) :-
-        ::profit_margin(ProfitMargin),
-        ::revenue(Revenue),
-        ProfitMargin \== 'None',
+    roe(Net, Book, Return) :-
+        Return is Net / Book.
+
+    net_income(OptionalNet) :-
+        ::profit_margin(OptionalMargin),
+        ::revenue(OptionalRevenue),
+        optional(OptionalMargin)::or_else_fail(ProfitMargin),
+        !,
+        optional(OptionalRevenue)::map(net_income(ProfitMargin), OptionalNet).
+    net_income(Empty) :-
+        optional::empty(Empty).
+
+    net_income(ProfitMargin, Revenue, Net) :-
         Net is ProfitMargin * Revenue.
 
-    previous_day_close(Price) :-
-        ::market_cap(MarketCap),
-        ::shares_outstanding(Shares),
-        Shares \== 'None',
+    previous_day_close(OptionalPrice) :-
+        ::market_cap(OptionalCap),
+        ::shares_outstanding(OptionalShares),
+        optional(OptionalCap)::or_else_fail(MarketCap),
         !,
-        Price is MarketCap / Shares.
-    previous_day_close('None').
+        optional(OptionalShares)::map(previous_day_close(MarketCap), OptionalPrice).
+    previous_day_close(Empty) :-
+        optional::empty(Empty).
 
-    book_value(Book) :-
-        ::pb_ratio(Ratio),
-        ::shares_outstanding(Shares),
-        Shares \== 'None',
-        previous_day_close(Price),
-        Price \== 'None',
+    previous_day_close(MarketCap, Shares, Price) :-
+        Price is MarketCap / Shares.
+
+    book_value(OptionalBook) :-
+        ::pb_ratio(OptionalRatio),
+        ::shares_outstanding(OptionalShares),
+        previous_day_close(OptionalPrice),
+        optional(OptionalPrice)::or_else_fail(Price),
+        optional(OptionalRatio)::or_else_fail(Ratio),
         !,
+        optional(OptionalShares)::map(book_value(Price, Ratio), OptionalBook).
+    book_value(Empty) :-
+        optional::empty(Empty).
+
+    book_value(Price, Ratio, Shares, Book) :-
         BVS is Price / Ratio,
         Book is BVS * Shares.
-    book_value('None').
 
     kth_order_stat(Sample, N, X) :-
         list::msort(Sample, Sample0),
