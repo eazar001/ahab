@@ -34,6 +34,12 @@
     logtalk::message_tokens(growth_score(done, Score), stock) -->
         [nl, 'Translated growth score is ~w' - [Score], nl].
 
+    logtalk::message_tokens(value_score(untranslated, Score), stock) -->
+        [nl, 'Initial (untranslated) value score is ~w' - [Score], nl].
+
+    logtalk::message_tokens(growth_score(untranslated, Score), stock) -->
+        [nl, 'Initial (untranslated) growth score is ~w' - [Score], nl].
+
     logtalk::message_tokens(overall_score(done, Score), stock) -->
         [nl, 'Translated overall score is ~w' - [Score], nl].
 
@@ -68,5 +74,8 @@
     
     logtalk::message_tokens(score_summary_header, stock) -->
         [nl, nl, '--- Computing final scores ---', nl, nl].
+    
+    logtalk::message_tokens(pre_score_summary_header, stock) -->
+        [nl, nl, '--- Untranslated scores ---', nl, nl].
 
 :- end_category.
