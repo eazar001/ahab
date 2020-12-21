@@ -1,13 +1,8 @@
-Equity Refinery Website
+Ahab Website
 -----------------------
 
 An automated stock screener, to score candidates for the highest value stocks in a given set.
 
-Usage:
-```
-./run.sh
+This website lists all the stocks, but sadly it doesn't sort yet
 
-?- refinery::write_score_output.
-```
-
-You should see the results written to this directory entitled "out.json".
+Access with 'localhost:8081/html'.

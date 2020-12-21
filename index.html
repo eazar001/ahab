@@ -1,52 +1,32 @@
-<!-- Equity Refinery -->
+<!-- Ahab -->
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/strict.dtd">
 
 <HTML>
 	<HEAD>
-		<TITLE>Equity Refinery</TITLE>
-		<LINK rel="stylesheet" href="./html/eqrf.css">
-		<SCRIPT src="./html/list.js"></SCRIPT>
-		<SCRIPT src="./html/eqrf.js"></SCRIPT>
-	</HEAD>
-	<BODY>
+    <TITLE>Ahab</TITLE>
+		<LINK rel="stylesheet" href="./html/ahab.css">
+    <SCRIPT src="./html/ahab.js"></SCRIPT>
+  </HEAD>
+  <BODY>
 
-		<!-- Trigger/Open The Modal (Testing Code) -->
-		<!--<button id="myBtn">Open Modal</button> -->
-
-		<!-- The Modal -->
-		<div id="myModal" class="modal">
+    <!-- The Modal -->
+		<DIV id="myModal" class="modal">
   		<!-- Modal content -->
-  		<div class="modal-content">
-    		<span class="close">&times;</span>
-    		<p id="myModalText">Some text in the Modal..</p>
-  		</div>
-		</div>
+  		<DIV class="modal-content">
+    		<SPAN class="close">&times;</SPAN>
+    		<P id="myModalText">Some text in the Modal..</P>
+  		</DIV>
+		</DIV>
 
-		<!-- Real code begins here -->
-		<div id="hacker-list" class="container">
-			<h1>Equity Refinery</h1>
-			<form>
-				Rate of return: <input type="text" id="r"> <br/><br/>
-				Principal: <input type="text" id="p"> <br/><br/>
-				Contribution: <input type="text" id="c"> <br/><br/>
-				Compounding frequency: <input type="text" id="n"> <br/><br/>
-				Investment time: <input type="text" id="t"> <br/><br/>
-				<button onclick="calculateInvestment(parseFloat(document.getElementById('r').value), parseFloat(document.getElementById('p').value), parseFloat(document.getElementById('c').value), parseFloat(document.getElementById('n').value), parseFloat(document.getElementById('t').value))">Calculate</button> <br/><br/>
-			</form>
+		<!-- The main code -->
+		<DIV id="maincontainer" class="container">
+			<H1>Ahab</H1>
+			<P>&quot;Hath seen the white whale...&quot;</P>
 
-			<!-- <input class="search" /> -->
-			<img src="./html/magnify.png" alt="SEARCH" height="14px" width="14px">
-			<input id="mysearch" />
-			<p>
-				<button class="sort" data-sort="name">Sort by name</button>
-				<button class="sort" data-sort="ticker">Sort by ticker</button>
-				<button class="sort" data-sort="scorefix">Sort by score</button>
-				<!-- <span class="sort" data-sort="ticker">Sort by ticker</span>
-  			<span class="sort" data-sort="score">Sort by score</span> -->
-			</p>
-			<p>
-				<table style="width:100%;" class="list"></table>
-			</p>
-		</div>
-	</BODY>
+			<P>
+				<TABLE style="width:100%;" class="list"></TABLE>
+			</P>
+		</DIV>
+
+  </BODY>
 </HTML>
