@@ -14,7 +14,7 @@ var modalText;
 // When the window opens, do this!
 window.onload = function(){
 
-  quickRequest("GET", "./allstonks.json", "", true);
+  quickRequest("GET", "./out.json", "", true);
 
 
 
