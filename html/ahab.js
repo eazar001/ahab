@@ -129,9 +129,10 @@ function buttonRespond(event, name, ticker, sector, industry, description, websi
   modalText.innerHTML = '<h1>'+name.replaceAll("-apos", "&apos;")+' ['+ticker+']</h1>'+
                         '<h4>'+industry+' - '+sector+'</h4>'+
                         '<p>'+description.replaceAll("-apos", "&apos;")+'</p>'+
-                        '<p><div id="modal-links"><div id="left"><a href="'+website+'" target="_blank">'+website+'</a>'+
-                        '<a href="https://www.google.com/search?q=stock:'+ticker+'" target="_blank"></div>'+
-                        '<div id="right"><img src="./html/google.png" alt="G" height="20px" width="20px"></a> '+
+                        '<p><div id="modal-links"><div id="left"><a href="'+website+'" target="_blank">'+website+'</a></div>'+
+                        '<div id="right"><img class="mag" onclick="peerRespond(event, \''+ticker+'\')" src="./html/magnify.png" alt="P" height="20px" width="20px">'+
+                        '<a href="https://www.google.com/search?q=stock:'+ticker+'" target="_blank">'+
+                        '<img src="./html/google.png" alt="G" height="20px" width="20px"></a> '+
                         '<a href="https://seekingalpha.com/symbol/'+ticker+'" target="_blank">'+
                         '<img src="./html/seeking_alpha.png" alt="S" height="20px" width="20px"></a> '+
                         '<a href="https://www.morningstar.com/stocks/'+mx+'/'+ticker+'/quote" target="_blank">'+
@@ -410,7 +411,7 @@ function activateSecret(symbol, searchbar){
     button0.innerHTML = "Random Sort"
   }else if(symbol == symbols[1]){
     button0.setAttribute("onclick", "exactItems(event, \'"+searchbar.replace("'","")+"\')");
-    button0.innerHTML = "Ticker List"
+    button0.innerHTML = "List Tickers"
   }else if(symbol == symbols[2]){
     button0.setAttribute("onclick", "investCalc(event, \'"+searchbar.replace("'","")+"\')");
     button0.innerHTML = "Calculator";
@@ -492,6 +493,28 @@ function calculateModal(event){
   // Output the data on the modal
   let right = document.getElementById('right');
   right.innerHTML = data
+}
+
+function peerRespond(event, key){
+
+  // Get all the peers and make sure the key is the first one
+  let peers = allItems[key].peers;
+  peers.unshift(key);
+
+  // Grab all the peers and list them in the ticker list
+  let tmptext = "_$ ";
+  for(let i = 0; i < peers.length; i++)
+    tmptext += peers[i] + " ";
+  searchbar.value = tmptext;
+
+  // Activate the bar
+  activateSecret('$', searchbar.value)
+
+  // Automatically doing it is a jarring experience sometimes
+  //exactItems(undefined, searchbar.value)
+
+  // Send them back so they can list tickers if they want to
+  modal.style.display = "none";
 }
 
 // -------------------------
