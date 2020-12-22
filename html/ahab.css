@@ -69,6 +69,10 @@ body {
   width: 80%; /* Could be more or less, depending on screen size */
 }
 
+/* Dealing with left and right */
+#left  { float:left;  }
+#right { float:right; }
+
 /* The Close Button */
 .close {
   color: #aaa;
