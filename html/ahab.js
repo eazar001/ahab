@@ -17,7 +17,7 @@ var sortIndex = 0;
 // Holds the current list
 var curList;
 // Holds the secret symbols
-var symbols = ['?', '$', '%']
+var symbols = ['?', '$', '#']
 
 // MODAL VARIABLES
 // ----------------
@@ -515,6 +515,13 @@ function peerRespond(event, key){
 
   // Send them back so they can list tickers if they want to
   modal.style.display = "none";
+
+  // Take us to the top of the window
+  window.scrollTo({
+    top: 0,
+    left: 100,
+    behavior: 'smooth'
+  });
 }
 
 // -------------------------

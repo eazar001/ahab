@@ -33,7 +33,7 @@ to see delimited by spaces. Then click 'Ticker List'.
 
 Argument Example: `_$ A TSLA AA GOOGL`
 
-- `_%` -> Investment Calculator Button (Prototype)
+- `_#` -> Investment Calculator Button (Prototype)
 
 Sometimes you just want to calculate how much money you'll be making over the
 years. Click Calculate to complete. The Arguments go in this order:
@@ -60,7 +60,7 @@ The amount of times this investment compounds interest
 
 The amount of investment years
 
-Argument Example: `_% .25 1000 100 .25 5`
+Argument Example: `_# .25 1000 100 .25 5`
 
 Website
 --------
