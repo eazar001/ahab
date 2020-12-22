@@ -16,6 +16,8 @@ var jsonkeys;
 var sortIndex = 0;
 // Holds the current list
 var curList;
+// Holds the secret symbols
+var symbols = ['?', '$', '%']
 
 // MODAL VARIABLES
 // ----------------
@@ -37,6 +39,7 @@ window.onload = function(){
 
   var span = document.getElementById("tablecontainer");
   var bttn = document.getElementById("buttoncontainer");
+  var sear = document.getElementById("searchcontainer");
 
   // Creates one real table
   let real = document.createElement('table');
@@ -64,6 +67,17 @@ window.onload = function(){
 	//Sets up the canvas if it isn't set up already
 	searchbar.setAttribute("id", "mysearch");
   searchbar.setAttribute("onkeyup", "searchRespond(event)");
+
+  // Sets up the secret button
+  let button0 = document.getElementById("button0");
+  if(button0 == null){
+    button0 = document.createElement("button");
+		sear.appendChild(button0);
+  }
+  button0.setAttribute("id", "button0");
+  button0.setAttribute("style", "display:none;");
+  button0.setAttribute("class", "sort");
+  button0.innerHTML = "Secret"
 
   // Sets up some buttons for clicking
   let button1 = document.getElementById("button1");
@@ -110,12 +124,20 @@ window.onload = function(){
 
 // When the user clicks on the button, open the modal
 // Used to format the modal text (allowing for some flexibility)
-function buttonRespond(event, name, ticker, sector, industry, description, website){
+function buttonRespond(event, name, ticker, sector, industry, description, website, mx){
   modal.style.display = "block";
   modalText.innerHTML = '<h1>'+name.replaceAll("-apos", "&apos;")+' ['+ticker+']</h1>'+
                         '<h4>'+industry+' - '+sector+'</h4>'+
                         '<p>'+description.replaceAll("-apos", "&apos;")+'</p>'+
-                        '<a href="'+website+'" target="_blank">'+website+'</a>';
+                        '<p><div id="modal-links"><div id="left"><a href="'+website+'" target="_blank">'+website+'</a>'+
+                        '<a href="https://www.google.com/search?q=stock:'+ticker+'" target="_blank"></div>'+
+                        '<div id="right"><img src="./html/google.png" alt="G" height="20px" width="20px"></a> '+
+                        '<a href="https://seekingalpha.com/symbol/'+ticker+'" target="_blank">'+
+                        '<img src="./html/seeking_alpha.png" alt="S" height="20px" width="20px"></a> '+
+                        '<a href="https://www.morningstar.com/stocks/'+mx+'/'+ticker+'/quote" target="_blank">'+
+                        '<img src="./html/morning_star.png" alt="M" height="20px" width="20px"></a> '+
+                        '<a href="https://finance.yahoo.com/quote/'+ticker.replace(".", "")+'" target="_blank">'+
+                        '<img src="./html/yahoo.png" alt="Y" height="20px" width="20px"></a></div><br style="clear:both;"/></div>';
 }
 
 // Custom search function to just search on particular rows
@@ -126,10 +148,11 @@ function searchRespond(event){
   }
 
   if(searchbar.value.charAt(0) == "_"){
-    if(searchbar.value.length == 1){
-      console.log("Let the games begin!")
+    if(symbols.includes(searchbar.value.charAt(1))){
+      activateSecret(searchbar.value.charAt(1), searchbar.value)
+    }else if(searchbar.value.length > 1){
+      activateSecret("", searchbar.value)
     }
-    //generateTable(numList(counter))
   }else{
     generateTable(itemfilter(searchbar.value, curList, ["name", "^", "^score"], 'i'))
   }
@@ -312,6 +335,16 @@ function itemsort(name, type){
         });
       }
 
+      // For completely random (Yates method)
+      else if(type.charAt(0) === 'r'){
+        for(let i = sortable.length-1; i > 0; i--){
+          let j = Math.floor(Math.random() * i);
+          let k = sortable[i];
+          sortable[i] = sortable[j];
+          sortable[j] = k;
+        }
+      }
+
       // Change the curList here
       curList = [];
       for(let i = 0; i < sortable.length; i++){
@@ -326,8 +359,6 @@ function itemsort(name, type){
     console.log("ERROR: Invalid name construct")
   }
 }
-
-
 
 // Generates a table depending on the search variables
 function generateTable(list){
@@ -355,6 +386,114 @@ function numList(max){
   return list
 }
 
+// ------------------------
+// SECRET FUNCTIONALITY
+// ------------------------
+
+function activateSecret(symbol, searchbar){
+
+  // Sets up the secret button
+  let button0 = document.getElementById("button0");
+  if(button0 == null){
+    button0 = document.createElement("button");
+		sear.appendChild(button0);
+  }
+  button0.setAttribute("id", "button0");
+  button0.setAttribute("class", "sort");
+  if(symbol == "")
+    button0.setAttribute("style", "display:none;");
+  else
+    button0.setAttribute("style", "display:inline-block;");
+
+  if(symbol == symbols[0]){
+    button0.setAttribute("onclick", "randomSort(event)");
+    button0.innerHTML = "Random Sort"
+  }else if(symbol == symbols[1]){
+    button0.setAttribute("onclick", "exactItems(event, \'"+searchbar.replace("'","")+"\')");
+    button0.innerHTML = "Ticker List"
+  }else if(symbol == symbols[2]){
+    button0.setAttribute("onclick", "investCalc(event, \'"+searchbar.replace("'","")+"\')");
+    button0.innerHTML = "Calculator";
+  }
+}
+
+function randomSort(event){
+  itemsort("", "r")
+  generateTable(curList)
+}
+
+function exactItems(event, searchlist){
+  // Grab all the keys and the delimiters
+  let keys = Object.keys(allItems)
+
+  // Get the regular Expression
+  let re = new RegExp("[ :;,]+", 'i')
+  let tmpmatch = searchlist.split(re)
+
+  // Clear out list and put exact items
+  curList = []
+  for(let i = 0; i < tmpmatch.length; i++){
+    if(keys.includes(tmpmatch[i]))
+      curList.push(allItems[tmpmatch[i]]._id)
+  }
+
+  // Draw out the table
+  generateTable(curList)
+
+}
+
+function investCalc(event, searchlist){
+  modal.style.display = "block";
+  modalText.innerHTML = '<h1 style="text-align: center;">Investment Calculator (Prototype)</h1>'+
+                        '<div id="left">'+
+                        '<p>Rate of Return<br/><input type="text" class="ic"></p>'+
+                        '<p>Principal<br/><input type="text" class="ic"></p>'+
+                        '<p>Contribution<br/><input type="text" class="ic"></p>'+
+                        '<p>Compounding Frequency<br/><input type="text" class="ic"></p>'+
+                        '<p>Investment Time<br/><input type="text" class="ic"></p>'+
+                        '<button id="ib" >Calculate</button></div>'+
+                        '<div id="right"></div><br style="clear:both;"/>';
+
+  // Grab the button
+  let button = document.getElementById("ib");
+  button.setAttribute("class", "sort")
+  button.setAttribute("onclick", "calculateModal(event)")
+
+  // Get the regular Expression
+  let re = new RegExp("[ :;,]+", 'i')
+  let tmpMatch = searchlist.split(re)
+
+  // If there are values in the searchbar
+  if(tmpMatch.length > 1){
+
+    // Grab all the class items
+    let items = document.getElementsByClassName('ic');
+
+    // Stores the values into the list
+    for(let i = 1; i < tmpMatch.length; i++)
+      items[i-1].value = tmpMatch[i];
+  }
+
+}
+
+function calculateModal(event){
+
+  // Get all the items in the list
+  let items = document.getElementsByClassName('ic');
+  let list = calculateAnnualizedInvestment(items[0].value, items[1].value,
+                          items[2].value, items[3].value, items[4].value);
+
+  // Collect all the data
+  let data = '<h2>Value (per Year)</h2>';
+  for(let i = 0; i < list.length; i++){
+    data += '<p>'+list[i]+'</p>'
+  }
+
+  // Output the data on the modal
+  let right = document.getElementById('right');
+  right.innerHTML = data
+}
+
 // -------------------------
 // GENERIC MODAL FUNCTIONS
 // -------------------------
@@ -371,6 +510,28 @@ window.onclick = function(event) {
   }
 }
 
+// --------------------------------
+// EQUITY REFINERY
+// Investment Calculator Functions
+// --------------------------------
+
+function calculateInvestment(rate, principal, contributions, periods, time) {
+  var base = 1 + rate / periods;
+  var nt = periods * time;
+
+  return (principal * base ** nt) + contributions * (base ** (nt + 1) - base) / rate;
+}
+
+function calculateAnnualizedInvestment(rate, principal, contributions, periods, time) {
+  var years = [];
+
+  for(i = 0; i < time; ++i) {
+    years.push(calculateInvestment(rate, principal, contributions, periods, i + 1));
+  }
+
+  return years;
+}
+
 // ---------------------
 // Generic Server Code
 // ---------------------
@@ -385,11 +546,14 @@ function respondObj(objt){
   let row;
   counter = 0;
 
+  let re = new RegExp("['\"]", 'g')
+
   // Goes through all the list items and forms them to my will
   Object.keys(objt).forEach(function(key) {
 
     // Make some extra objects
     objt[key]['_id'] = counter;
+    objt[key]['_ticker'] = key;
     // Not needed since sorting algorithms improved
     //objt[key]['_score'] = 10000000-(parseInt(objt[key].score*100)+1000000);
 
@@ -399,6 +563,7 @@ function respondObj(objt){
     // Grabs all the jsonkeys for sorting purposes
     if(jsonkeys === undefined)
       jsonkeys = Object.keys(objt[key])
+      // Generic thing for the ticker (which is also a key)
       jsonkeys.unshift("")
 
     // Add the row to it
@@ -409,10 +574,10 @@ function respondObj(objt){
 
     // The name
     let nameurl = '<span class="mag" onclick="buttonRespond(event, \''+
-                        value.name.replaceAll("'", '-apos')+'\', \''+key.toUpperCase()+'\', \''+
+                        value.name.replaceAll(re, '-apos')+'\', \''+key.toUpperCase()+'\', \''+
                         value.sector+'\', \''+value.industry+'\', \''+
-                        value.description.replaceAll("'", '-apos')+'\', \''+value.website+'\' )">'+
-                        value.name+' <img src="./html/info.png" alt="'+
+                        value.description.replaceAll(re, '-apos')+'\', \''+value.website+'\', \''+
+                        value.mx+'\' )">'+value.name+' <img src="./html/info.png" alt="'+
                         key+'" height="14px" width="14px" ></span>';
     row = document.createElement('td');
     column.appendChild(row);
