@@ -1,6 +1,20 @@
 
 // We need to build a sorting algorithm for the objt class
 
+// TESTER VARIABLES
+// ----------------
+// For easy access to functions to test the website
+
+// For quickly testing different JSON variants
+var jsonfile = "tinystocks.json"; //"allstonks.json"; //"out.json" or "" for default
+// Holds the secret symbols
+var symbols = ['$', '#']
+
+// Sorting symbols
+var sortsym = ['+', '-', '>', '<', '?']
+// Sorting buttons
+var sortbtn = ['Word ASC Sort', 'Word DESC Sort', 'Number ASC Sort', 'Number DESC Sort', 'Random Sort']
+
 // GLOBAL VARIABLES
 // ----------------
 
@@ -16,8 +30,7 @@ var jsonkeys;
 var sortIndex = 0;
 // Holds the current list
 var curList;
-// Holds the secret symbols
-var symbols = ['?', '$', '#']
+
 
 // MODAL VARIABLES
 // ----------------
@@ -42,20 +55,24 @@ window.onload = function(){
   var sear = document.getElementById("searchcontainer");
 
   // Creates one real table
-  let real = document.createElement('table');
+  var real = document.createElement('table');
   real.setAttribute("class", "list");
   real.setAttribute("id", "real");
   real.setAttribute("style", "width:100%;");
   span.appendChild(real);
 
   // Creates one fake table
-  let fake = document.createElement('table');
+  var fake = document.createElement('table');
   fake.setAttribute("class", "list");
   fake.setAttribute("id", "fake");
   fake.setAttribute("style", "width:100%; display:none;");
   span.appendChild(fake);
 
-  quickRequest("GET", "./out.json", "", true);
+  // If nothing is written, just use the default
+  if(jsonfile == "")
+    jsonfile = "out.json";
+
+  quickRequest("GET", "./"+jsonfile, "", true);
 
   // Creates a new search if one isn't made already
 	searchbar = document.getElementById("mysearch");
@@ -69,7 +86,7 @@ window.onload = function(){
   searchbar.setAttribute("onkeyup", "searchRespond(event)");
 
   // Sets up the secret button
-  let button0 = document.getElementById("button0");
+  var button0 = document.getElementById("button0");
   if(button0 == null){
     button0 = document.createElement("button");
 		sear.appendChild(button0);
@@ -80,7 +97,7 @@ window.onload = function(){
   button0.innerHTML = "Secret"
 
   // Sets up some buttons for clicking
-  let button1 = document.getElementById("button1");
+  var button1 = document.getElementById("button1");
   if(button1 == null){
     button1 = document.createElement("button");
 		bttn.appendChild(button1);
@@ -90,7 +107,7 @@ window.onload = function(){
   button1.setAttribute("onclick", "sortRespond(event, 'name', 'l')")
   button1.innerHTML = "Sort by Name"
 
-  let button2 = document.getElementById("button2");
+  var button2 = document.getElementById("button2");
   if(button2 == null){
     button2 = document.createElement("button");
 		bttn.appendChild(button2);
@@ -100,7 +117,7 @@ window.onload = function(){
   button2.setAttribute("onclick", "sortRespond(event, '', 'l')")
   button2.innerHTML = "Sort by Ticker"
 
-  let button3 = document.getElementById("button3");
+  var button3 = document.getElementById("button3");
   if(button3 == null){
     button3 = document.createElement("button");
 		bttn.appendChild(button3);
@@ -149,11 +166,8 @@ function searchRespond(event){
   }
 
   if(searchbar.value.charAt(0) == "_"){
-    if(symbols.includes(searchbar.value.charAt(1))){
-      activateSecret(searchbar.value.charAt(1), searchbar.value)
-    }else if(searchbar.value.length > 1){
-      activateSecret("", searchbar.value)
-    }
+    if(searchbar.value.length > 0)
+      activateSecret(searchbar.value);
   }else{
     generateTable(itemfilter(searchbar.value, curList, ["name", "^", "^score"], 'i'))
   }
@@ -165,7 +179,7 @@ function sortRespond(event, name, type){
   // If you don't find the name, don't sort anything
   if(jsonkeys.includes(name)){
 
-    let ind = jsonkeys.indexOf(name)+1
+    var ind = jsonkeys.indexOf(name)+1
 
     if(ind === Math.abs(sortIndex)){
       sortIndex *= -1;
@@ -178,17 +192,17 @@ function sortRespond(event, name, type){
       // Sort using letter sorting
       if(type.charAt(0) === 'l'){
         if(sortIndex > 0){
-          itemsort(name, 'a')
+          itemsort(name, '+')
         }else{
-          itemsort(name, 'd')
+          itemsort(name, '-')
         }
       }
       // Sort using numeric sorting
       else{
         if(sortIndex > 0){
-          itemsort(name, '+')
+          itemsort(name, '>')
         }else{
-          itemsort(name, '-')
+          itemsort(name, '<')
         }
       }
     }
@@ -204,22 +218,22 @@ function itemfilter(text, list, searchname, attr){
   if(text !== ""){
 
     // Get an empty list started
-    let tmplist = [];
+    var tmplist = [];
 
     // Get all keys
-    let keys = Object.keys(allItems)
+    var keys = Object.keys(allItems)
 
     // Get the regular Expression
-    let re = new RegExp(text+".*", attr)
+    var re = new RegExp(text+".*", attr)
 
     // Get the beginning Expression
-    let be = new RegExp("^"+text+".*", attr)
+    var be = new RegExp("^"+text+".*", attr)
 
     // If searchname is empty, use keys to filter
     if(searchname.length < 1){
 
       // Go through all the elements and get the ones that match
-      for(let i = 0; i < list.length; i++){
+      for(var i = 0; i < list.length; i++){
 
         // If key matches, push it onto the list
         // Blank checks only the ticker
@@ -231,10 +245,10 @@ function itemfilter(text, list, searchname, attr){
     }else{
 
       // Go through all the elements and get the ones that match
-      for(let i = 0; i < list.length; i++){
+      for(var i = 0; i < list.length; i++){
 
         // We need to look through all the search names too
-        for(let j = 0; j < searchname.length; j++){
+        for(var j = 0; j < searchname.length; j++){
 
           // This makes it search the start of a string
           if(searchname[j].charAt(0) === "^"){
@@ -266,12 +280,11 @@ function itemfilter(text, list, searchname, attr){
       }
     }
 
-    // Return the list
-    return tmplist
-
+    // store the tmplist to the real list
+    list = tmplist;
   }
 
-  // We will handle functionality for underscore in here later
+  // Return the entire list
   return list
 }
 
@@ -279,7 +292,7 @@ function itemfilter(text, list, searchname, attr){
 function itemsort(name, type){
 
   // sortable array
-  let sortable = [];
+  var sortable = [];
 
   // Turn the entire thing into a sortable array first
   for (var item in allItems) {
@@ -287,60 +300,48 @@ function itemsort(name, type){
   }
 
   // We change how we sort depending on the type
-  let tind = 1;
+  var tind = 1;
   if(name === ""){
     tind = 0;
   }
   if(jsonkeys.includes(name)){
     if(type.length >= 1){
       // For numeric (ascending number order)
-      if(type.charAt(0) === '+'){
+      if(type.charAt(0) === '>'){
         sortable.sort(function(a, b){
           return a[tind] - b[tind];
         });
       }
 
       // For numeric (decending number order)
-      else if(type.charAt(0) === '-'){
+      else if(type.charAt(0) === '<'){
         sortable.sort(function(a, b){
           return b[tind] - a[tind];
         });
       }
 
-      else if(type.charAt(0) === 'a'){
+      else if(type.charAt(0) === '+'){
         sortable.sort(function(a, b){
-          let x = a[tind].toLowerCase();
-          let y = b[tind].toLowerCase();
-          if (x < y) {
-            return -1;
-          }
-          if (x > y) {
-            return 1;
-          }
-          return 0;
+          var x = a[tind].toLowerCase();
+          var y = b[tind].toLowerCase();
+          return (x === y) ? 0 : (x < y) ? -1 : 1;
         });
       }
 
       // For numeric (decending number order)
-      else if(type.charAt(0) === 'd'){
+      else if(type.charAt(0) === '-'){
         sortable.sort(function(a, b){
-          let x = a[tind].toLowerCase();
-          let y = b[tind].toLowerCase();
-          if (x < y) {
-            return 1;
-          }
-          if (x > y) {
-            return -1;
-          }
-          return 0;
+          var x = a[tind].toLowerCase();
+          var y = b[tind].toLowerCase();
+          return (x === y) ? 0 : (x < y) ? 1 : -1;
         });
       }
 
       // For completely random (Yates method)
-      else if(type.charAt(0) === 'r'){
-        for(let i = sortable.length-1; i > 0; i--){
-          let j = Math.floor(Math.random() * i);
-          let k = sortable[i];
+      else if(type.charAt(0) === '?'){
+        for(var i = sortable.length-1; i > 0; i--){
+          var j = Math.floor(Math.random() * i);
+          var k = sortable[i];
           sortable[i] = sortable[j];
           sortable[j] = k;
         }
@@ -348,12 +349,12 @@ function itemsort(name, type){
 
       // Change the curList here
       curList = [];
-      for(let i = 0; i < sortable.length; i++){
+      for(var i = 0; i < sortable.length; i++){
         curList.push(sortable[i][2])
       }
 
     }else{
-      console.log("ERROR: To use this function you need a type [+,-,a,d]")
+      console.log("ERROR: To use this function you need a type [>,<,+,-,?]")
     }
 
   }else{
@@ -364,16 +365,16 @@ function itemsort(name, type){
 // Generates a table depending on the search variables
 function generateTable(list){
 
-  let real = document.getElementById("real");
-  let fake = document.getElementById("fake");
+  var real = document.getElementById("real");
+  var fake = document.getElementById("fake");
 
   // Grab all nodes and put them into the fake table
-  for(let i = 0; i < counter; i++){
+  for(var i = 0; i < counter; i++){
     fake.appendChild(document.getElementById(""+i))
   }
 
   // Take all nodes and put them into a list
-  for(let i = 0; i < list.length; i++){
+  for(var i = 0; i < list.length; i++){
     real.appendChild(document.getElementById(""+list[i]))
   }
 }
@@ -381,8 +382,8 @@ function generateTable(list){
 // Generates list depending on stuff
 // Generates a list of all the numbers
 function numList(max){
-  let list = Array(max);
-  for(let i = 0; i < max; i++)
+  var list = Array(max);
+  for(var i = 0; i < max; i++)
     list[i] = i;
   return list
 }
@@ -391,49 +392,90 @@ function numList(max){
 // SECRET FUNCTIONALITY
 // ------------------------
 
-function activateSecret(symbol, searchbar){
+function activateSecret(searchbar){
+
+  // Get the symbol from the searchbar instead
+  var symbol = "";
+  if(searchbar.length > 1)
+    symbol = searchbar.charAt(1);
 
   // Sets up the secret button
-  let button0 = document.getElementById("button0");
+  var button0 = document.getElementById("button0");
   if(button0 == null){
     button0 = document.createElement("button");
 		sear.appendChild(button0);
   }
   button0.setAttribute("id", "button0");
   button0.setAttribute("class", "sort");
-  if(symbol == "")
-    button0.setAttribute("style", "display:none;");
-  else
-    button0.setAttribute("style", "display:inline-block;");
+  button0.setAttribute("style", (symbol == "") ? "display:none;" : "display:inline-block;");
 
+  // Check for all the types of special functionality we can do
+
+  // This is for listing the tickers
   if(symbol == symbols[0]){
-    button0.setAttribute("onclick", "randomSort(event)");
-    button0.innerHTML = "Random Sort"
-  }else if(symbol == symbols[1]){
     button0.setAttribute("onclick", "exactItems(event, \'"+searchbar.replace("'","")+"\')");
     button0.innerHTML = "List Tickers"
-  }else if(symbol == symbols[2]){
+  }
+  // This is for showing the investment calculator
+  else if(symbol == symbols[1]){
     button0.setAttribute("onclick", "investCalc(event, \'"+searchbar.replace("'","")+"\')");
     button0.innerHTML = "Calculator";
   }
+  // This enables all the different sorting algorithms
+  else if(sortsym.includes(symbol)){
+    button0.setAttribute("onclick", "sortItems(event, \'"+searchbar.replace("'","")+"\')");
+    button0.innerHTML = sortbtn[sortsym.indexOf(symbol)];
+  }
+  // Don't show anything at all
+  else{
+    button0.setAttribute("style", "display:none;");
+  }
 }
 
-function randomSort(event){
-  itemsort("", "r")
+function triggerSort(event, name, key){
+  itemsort(name, key)
   generateTable(curList)
+}
+
+function sortItems(event, searchlist){
+
+  // Get the regular Expression
+  var re = new RegExp("[ :;,]+", 'i')
+  var tmpmatch = searchlist.split(re)
+
+  // First get the symbol of the operation we will perform
+  var symbol = searchlist.charAt(1);
+
+  // Let's gather the type list
+  var typelist = []
+  for(var i = 0; i < tmpmatch.length; i++){
+    if(jsonkeys.includes(tmpmatch[i]))
+      typelist.push(tmpmatch[i]);
+    else if(jsonkeys.includes("_"+tmpmatch[i]))
+      typelist.push("_"+tmpmatch[i])
+  }
+
+  console.log(typelist);
+
+  // Depending on the size of the typelist is how we would react
+  if(typelist.length > 0){
+    triggerSort(event, typelist[0], symbol);
+  }else
+    triggerSort(event, "", symbol);
+
 }
 
 function exactItems(event, searchlist){
   // Grab all the keys and the delimiters
-  let keys = Object.keys(allItems)
+  var keys = Object.keys(allItems)
 
   // Get the regular Expression
-  let re = new RegExp("[ :;,]+", 'i')
-  let tmpmatch = searchlist.split(re)
+  var re = new RegExp("[ :;,]+", 'i')
+  var tmpmatch = searchlist.split(re)
 
   // Clear out list and put exact items
   curList = []
-  for(let i = 0; i < tmpmatch.length; i++){
+  for(var i = 0; i < tmpmatch.length; i++){
     if(keys.includes(tmpmatch[i]))
       curList.push(allItems[tmpmatch[i]]._id)
   }
@@ -456,22 +498,22 @@ function investCalc(event, searchlist){
                         '<div id="right"></div><br style="clear:both;"/>';
 
   // Grab the button
-  let button = document.getElementById("ib");
+  var button = document.getElementById("ib");
   button.setAttribute("class", "sort")
   button.setAttribute("onclick", "calculateModal(event)")
 
   // Get the regular Expression
-  let re = new RegExp("[ :;,]+", 'i')
-  let tmpMatch = searchlist.split(re)
+  var re = new RegExp("[ :;,]+", 'i')
+  var tmpMatch = searchlist.split(re)
 
   // If there are values in the searchbar
   if(tmpMatch.length > 1){
 
     // Grab all the class items
-    let items = document.getElementsByClassName('ic');
+    var items = document.getElementsByClassName('ic');
 
     // Stores the values into the list
-    for(let i = 1; i < tmpMatch.length; i++)
+    for(var i = 1; i < tmpMatch.length; i++)
       items[i-1].value = tmpMatch[i];
   }
 
@@ -480,35 +522,35 @@ function investCalc(event, searchlist){
 function calculateModal(event){
 
   // Get all the items in the list
-  let items = document.getElementsByClassName('ic');
-  let list = calculateAnnualizedInvestment(items[0].value, items[1].value,
+  var items = document.getElementsByClassName('ic');
+  var list = calculateAnnualizedInvestment(items[0].value, items[1].value,
                           items[2].value, items[3].value, items[4].value);
 
   // Collect all the data
-  let data = '<h2>Value (per Year)</h2>';
-  for(let i = 0; i < list.length; i++){
+  var data = '<h2>Value (per Year)</h2>';
+  for(var i = 0; i < list.length; i++){
     data += '<p>'+list[i]+'</p>'
   }
 
   // Output the data on the modal
-  let right = document.getElementById('right');
+  var right = document.getElementById('right');
   right.innerHTML = data
 }
 
 function peerRespond(event, key){
 
   // Get all the peers and make sure the key is the first one
-  let peers = allItems[key].peers;
+  var peers = allItems[key].peers;
   peers.unshift(key);
 
   // Grab all the peers and list them in the ticker list
-  let tmptext = "_$ ";
-  for(let i = 0; i < peers.length; i++)
+  var tmptext = "_$ ";
+  for(var i = 0; i < peers.length; i++)
     tmptext += peers[i] + " ";
   searchbar.value = tmptext;
 
   // Activate the bar
-  activateSecret('$', searchbar.value)
+  activateSecret(searchbar.value)
 
   // Automatically doing it is a jarring experience sometimes
   //exactItems(undefined, searchbar.value)
@@ -522,6 +564,19 @@ function peerRespond(event, key){
     left: 100,
     behavior: 'smooth'
   });
+
+  // Focus on the searchbar
+  searchbar.focus()
+  searchbar.select()
+}
+
+document.onkeyup = function(e){
+    var keycode = (e === null) ? window.event.keyCode : e.which;
+    if(keycode === 13) {
+        console.log("Enter pressed");
+        var button0 = document.getElementById("button0");
+        button0.click()
+    }
 }
 
 // -------------------------
@@ -548,8 +603,10 @@ window.onclick = function(event) {
 function calculateInvestment(rate, principal, contributions, periods, time) {
   var base = 1 + rate / periods;
   var nt = periods * time;
+  //var answer = (principal * base ** nt) + contributions * (base ** (nt + 1) - base) / rate;
+  var answer = (principal * Math.pow(base,nt)) + contributions * (Math.pow(base, nt+1) - base) / rate;
 
-  return (principal * base ** nt) + contributions * (base ** (nt + 1) - base) / rate;
+  return answer;
 }
 
 function calculateAnnualizedInvestment(rate, principal, contributions, periods, time) {
@@ -570,13 +627,13 @@ function calculateAnnualizedInvestment(rate, principal, contributions, periods, 
 function respondObj(objt){
 
   // Get the table element
-  let table = document.getElementsByClassName("list")[0];
+  var table = document.getElementsByClassName("list")[0];
 
-  let column;
-  let row;
+  var column;
+  var row;
   counter = 0;
 
-  let re = new RegExp("['\"]", 'g')
+  var re = new RegExp("['\"]", 'g')
 
   // Goes through all the list items and forms them to my will
   Object.keys(objt).forEach(function(key) {
@@ -603,7 +660,7 @@ function respondObj(objt){
     column.setAttribute("id", ""+counter)
 
     // The name
-    let nameurl = '<span class="mag" onclick="buttonRespond(event, \''+
+    var nameurl = '<span class="mag" onclick="buttonRespond(event, \''+
                         value.name.replaceAll(re, '-apos')+'\', \''+key.toUpperCase()+'\', \''+
                         value.sector+'\', \''+value.industry+'\', \''+
                         value.description.replaceAll(re, '-apos')+'\', \''+value.website+'\', \''+
@@ -621,7 +678,7 @@ function respondObj(objt){
     row.innerHTML = key;
 
     // The links
-    let link = '<a href="https://www.google.com/search?q=stock:'+key+'" target="_blank">'+
+    var link = '<a href="https://www.google.com/search?q=stock:'+key+'" target="_blank">'+
             '<img src="./html/google.png" alt="G"></a> '+
             '<a href="https://seekingalpha.com/symbol/'+key+'" target="_blank">'+
             '<img src="./html/seeking_alpha.png" alt="S"></a> '+

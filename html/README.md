@@ -5,6 +5,7 @@ Ahab Website
 Welcome to the new and improved Ahab website. It may look like the same old
 basic equity_refinery, but looks are definitely deceiving.
 
+---------
 Features
 ---------
 
@@ -12,6 +13,7 @@ Features
 - Sort by name, ticker, and score
 - Filter in real time
 
+-----------------
 Secret Features
 ----------------
 
@@ -21,19 +23,22 @@ The underscore functionality.
 
 In the search bar, type out the following for special functionality:
 
-- `_?` -> Random Sort Button
+`_?` -> Random Sort Button
+----------------------------
 
 This sorts all the stocks randomly in the list. Good for finding out new
 stocks that you may not have seen before
 
-- `_$` -> Ticker List Button
+`_$` -> Ticker List Button
+----------------------------
 
 Tired of seeing all the stocks, then write out a list of stocks that you want
 to see delimited by spaces. Then click 'Ticker List'.
 
 Argument Example: `_$ A TSLA AA GOOGL`
 
-- `_#` -> Investment Calculator Button (Prototype)
+`_#` -> Investment Calculator Button (Prototype)
+-------------------------------------------------
 
 Sometimes you just want to calculate how much money you'll be making over the
 years. Click Calculate to complete. The Arguments go in this order:
@@ -62,6 +67,27 @@ The amount of investment years
 
 Argument Example: `_# .25 1000 100 .25 5`
 
+`_+` -> String Comparison Sort (Ascending) Button
+---------------------------------------------
+
+Sorts the ticker list in ascending order. Strings only.
+
+`_-` -> String Comparison Sort (Descending) Button
+---------------------------------------------
+
+Sorts the ticker list in descending order. Strings only.
+
+`_>` -> Alpha-Numeric Sort (Ascending) Button
+-----------------------------------------------
+
+Sorts the ticker list in ascending order. Safest sorting method.
+
+`_<` -> Alpha-Numeric Sort (Descending) Button
+-----------------------------------------------
+
+Sorts the ticker list in descending order. Safest sorting method.
+
+--------
 Website
 --------
 An automated stock screener, to score candidates for the highest value stocks
