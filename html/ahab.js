@@ -6,7 +6,7 @@
 // For easy access to functions to test the website
 
 // For quickly testing different JSON variants
-var jsonfile = "tinystocks.json"; //"allstonks.json"; //"out.json" or "" for default
+var jsonfile = ""; //"allstonks.json"; //"out.json" or "" for default
 // Holds the secret symbols
 var symbols = ['$', '#']
 
