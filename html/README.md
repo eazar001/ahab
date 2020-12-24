@@ -194,3 +194,14 @@ to stay away from third party tools for this thing, I believe the investment
 calculator is one of those features that needs the most tender loving care
 in order for it to be a lot more useful to the users that are interacting
 with it.
+
+- Secret Feature - Load JSON (&)
+
+This feature will allow power users to load JSON files by the filename. If
+I do put this in, it'll probably only be for testing purposes. However,
+dynamically loading files would be something I personally would like to do
+just for testing reasons.
+
+The only way I can see this being used in the future is if we kept a history
+of stocks all in different files. Then I can call the database to load up
+the history and get the recommendations over time. A pipe dream, or is it?
